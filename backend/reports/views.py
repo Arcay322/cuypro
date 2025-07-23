@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Sum, F, Count, Avg
-from core.models import Animal, WeightLog, FeedingLog, FinancialTransaction, ReproductionEvent, Treatment, HealthLog
+from core.models import Animal, WeightLog, FeedingLog, FinancialTransaction, ReproductionEvent, Treatment, HealthLog, FeedInventory
 from datetime import datetime, timedelta, date
 
 class ICAReportView(APIView):
@@ -235,4 +235,21 @@ class IneffectiveTreatmentAlertsView(APIView):
                     'message': f"Animal {animal.unique_tag} has received {entry['treatment_count']} treatments for {entry['diagnosis']} in the last 30 days, suggesting potential ineffectiveness."
                 })
 
+        return Response(alerts, status=status.HTTP_200_OK)
+
+class LowStockAlertsView(APIView):
+    def get(self, request, format=None):
+        alerts = []
+        # Define a low stock threshold (e.g., 10 kg or a configurable value)
+        low_stock_threshold = 10.0
+
+        low_stock_items = FeedInventory.objects.filter(quantity_kg__lt=low_stock_threshold)
+
+        for item in low_stock_items:
+            alerts.append({
+                'product_name': item.product_name,
+                'current_stock_kg': item.quantity_kg,
+                'threshold_kg': low_stock_threshold,
+                'message': f"Low stock alert: {item.product_name} is below {low_stock_threshold} kg. Current stock: {item.quantity_kg} kg."
+            })
         return Response(alerts, status=status.HTTP_200_OK)

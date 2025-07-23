@@ -93,6 +93,13 @@ interface IneffectiveTreatmentAlert {
   message: string;
 }
 
+interface LowStockAlert {
+  product_name: string;
+  current_stock_kg: number;
+  threshold_kg: number;
+  message: string;
+}
+
 interface Animal {
   id: number;
   unique_tag: string;
@@ -112,6 +119,7 @@ function ReportsDashboard() {
   const [wpiReport, setWpiReport] = useState<WPIReport | null>(null);
   const [withdrawalAlerts, setWithdrawalAlerts] = useState<WithdrawalAlert[]>([]);
   const [ineffectiveTreatmentAlerts, setIneffectiveTreatmentAlerts] = useState<IneffectiveTreatmentAlert[]>([]);
+  const [lowStockAlerts, setLowStockAlerts] = useState<LowStockAlert[]>([]);
   const [animals, setAnimals] = useState<Animal[]>([]); // For animal selection in GDP report
   const [breedingReadyAnimals, setBreedingReadyAnimals] = useState<Animal[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -157,6 +165,9 @@ function ReportsDashboard() {
 
         const ineffectiveRes = await axios.get('http://localhost:8000/api/reports/ineffective-treatment-alerts/');
         setIneffectiveTreatmentAlerts(ineffectiveRes.data);
+
+        const lowStockRes = await axios.get('http://localhost:8000/api/reports/low-stock-alerts/');
+        setLowStockAlerts(lowStockRes.data);
 
         // Fetch animals for GDP report dropdown and breeding ready animals
         const animalsRes = await axios.get('http://localhost:8000/api/animals/');
@@ -432,27 +443,6 @@ function ReportsDashboard() {
       <div className="row">
         <div className="col-md-12">
           <div className="card mb-3">
-            <div className="card-header"><h3>Animals Ready for Breeding</h3></div>
-            <div className="card-body">
-              {breedingReadyAnimals.length > 0 ? (
-                <ul className="list-group">
-                  {breedingReadyAnimals.map(animal => (
-                    <li key={animal.id} className="list-group-item">
-                      {animal.unique_tag} ({animal.sex})
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No animals currently ready for breeding based on defined criteria.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="row">
-        <div className="col-md-12">
-          <div className="card mb-3">
             <div className="card-header"><h3>Health Alerts</h3></div>
             <div className="card-body">
               <h4>Withdrawal Period Alerts</h4>
@@ -479,6 +469,19 @@ function ReportsDashboard() {
                 </ul>
               ) : (
                 <p>No ineffective treatment alerts.</p>
+              )}
+
+              <h4>Low Stock Alerts</h4>
+              {lowStockAlerts.length > 0 ? (
+                <ul className="list-group">
+                  {lowStockAlerts.map((alert, index) => (
+                    <li key={index} className="list-group-item alert-danger">
+                      {alert.message} (Product: {alert.product_name}, Current Stock: {alert.current_stock_kg} kg)
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No low stock alerts.</p>
               )}
             </div>
           </div>

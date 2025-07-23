@@ -60,3 +60,9 @@ class IneffectiveTreatmentAlertSerializer(serializers.Serializer):
     diagnosis = serializers.CharField(max_length=255)
     treatment_count = serializers.IntegerField()
     message = serializers.CharField(max_length=255)
+
+class LowStockAlertSerializer(serializers.Serializer):
+    product_name = serializers.CharField(max_length=100)
+    current_stock_kg = serializers.DecimalField(max_digits=10, decimal_places=2)
+    threshold_kg = serializers.DecimalField(max_digits=10, decimal_places=2)
+    message = serializers.CharField(max_length=255)

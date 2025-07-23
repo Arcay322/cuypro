@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from datetime import timedelta
+from datetime import timedelta, date
 
 class User(AbstractUser):
     # Add any additional fields for your user model here
@@ -55,7 +55,7 @@ class Animal(models.Model):
 
     def is_breeding_ready(self):
         # Example logic: Female ready at 3 months and 800g, Male at 4 months and 1kg
-        today = models.DateField.today()
+        today = date.today()
         age_in_days = (today - self.birth_date).days
 
         latest_weight = self.weightlog_set.order_by('-log_date').first()
@@ -144,5 +144,26 @@ class FeedingLog(models.Model):
     feed_type = models.CharField(max_length=100) # e.g., 'Forraje', 'Concentrado'
     quantity_kg = models.DecimalField(max_digits=5, decimal_places=2)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Update FeedInventory
+        try:
+            feed_item = FeedInventory.objects.get(product_name=self.feed_type)
+            feed_item.quantity_kg -= self.quantity_kg
+            feed_item.save()
+        except FeedInventory.DoesNotExist:
+            # Handle case where feed_type is not in inventory (e.g., log a warning)
+            pass
+
     def __str__(self):
         return f"Feeding at {self.location.name} on {self.log_date} - {self.quantity_kg} kg of {self.feed_type}"
+
+class FeedInventory(models.Model):
+    product_name = models.CharField(max_length=100, unique=True)
+    quantity_kg = models.DecimalField(max_digits=10, decimal_places=2)
+    cost_per_kg = models.DecimalField(max_digits=5, decimal_places=2)
+    supplier = models.CharField(max_length=100, blank=True, null=True)
+    entry_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.product_name} - {self.quantity_kg} kg"

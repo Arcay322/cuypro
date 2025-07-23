@@ -14,6 +14,7 @@ router.register(r'medications', views.MedicationViewSet)
 router.register(r'treatments', views.TreatmentViewSet)
 router.register(r'financialtransactions', views.FinancialTransactionViewSet)
 router.register(r'feedinglogs', views.FeedingLogViewSet)
+router.register(r'feedinventory', views.FeedInventoryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
