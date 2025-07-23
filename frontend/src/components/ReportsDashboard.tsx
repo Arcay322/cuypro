@@ -1,5 +1,26 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface ICAReport {
   total_feed_consumed_kg: number;
@@ -31,14 +52,22 @@ function ReportsDashboard() {
   const [profitAndLossReport, setProfitAndLossReport] = useState<ProfitAndLossReport | null>(null);
   const [batchProfitabilityReport, setBatchProfitabilityReport] = useState<BatchProfitabilityReport | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     const fetchReports = async () => {
+      setError(null);
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+      };
+
       try {
-        const icaRes = await axios.get('http://localhost:8000/api/reports/ica-report/');
+        const icaRes = await axios.get('http://localhost:8000/api/reports/ica-report/', { params });
         setIcaReport(icaRes.data);
 
-        const costRes = await axios.get('http://localhost:8000/api/reports/cost-per-kg-gained-report/');
+        const costRes = await axios.get('http://localhost:8000/api/reports/cost-per-kg-gained-report/', { params });
         setCostReport(costRes.data);
 
         const profitLossRes = await axios.get('http://localhost:8000/api/reports/profit-and-loss-report/');
@@ -53,12 +82,70 @@ function ReportsDashboard() {
       }
     };
     fetchReports();
-  }, []);
+  }, [startDate, endDate]); // Re-fetch reports when dates change
+
+  const icaChartData = {
+    labels: ['ICA'],
+    datasets: [
+      {
+        label: 'ICA Value',
+        data: [icaReport?.ica || 0],
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const costChartData = {
+    labels: ['Cost Per Kg Gained'],
+    datasets: [
+      {
+        label: 'Cost Value',
+        data: [costReport?.cost_per_kg_gained || 0],
+        borderColor: 'rgb(255, 99, 132)',
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Report Data',
+      },
+    },
+  };
 
   return (
     <div className="container mt-4">
       <h2>Reports Dashboard</h2>
       {error && <div className="alert alert-danger" role="alert">{error}</div>}
+
+      <div className="mb-3">
+        <label htmlFor="startDate" className="form-label">Start Date:</label>
+        <input
+          type="date"
+          id="startDate"
+          className="form-control"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="endDate" className="form-label">End Date:</label>
+        <input
+          type="date"
+          id="endDate"
+          className="form-control"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </div>
 
       <div className="row">
         <div className="col-md-6">
@@ -70,6 +157,9 @@ function ReportsDashboard() {
                   <p>Total Feed Consumed: {icaReport.total_feed_consumed_kg} kg</p>
                   <p>Total Weight Gained: {icaReport.total_weight_gained_kg} kg</p>
                   <p>ICA (Feed Conversion Ratio): {icaReport.ica}</p>
+                  <div style={{ width: '100%', height: '200px' }}>
+                    <Line data={icaChartData} options={chartOptions} />
+                  </div>
                 </div>
               ) : (
                 <p>Loading ICA Report...</p>
@@ -87,6 +177,9 @@ function ReportsDashboard() {
                   <p>Total Feed Cost: ${costReport.total_feed_cost}</p>
                   <p>Total Weight Gained: {costReport.total_weight_gained_kg} kg</p>
                   <p>Cost Per Kg Gained: ${costReport.cost_per_kg_gained}</p>
+                  <div style={{ width: '100%', height: '200px' }}>
+                    <Line data={costChartData} options={chartOptions} />
+                  </div>
                 </div>
               ) : (
                 <p>Loading Cost Per Kg Gained Report...</p>

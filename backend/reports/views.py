@@ -7,15 +7,23 @@ from datetime import datetime
 
 class ICAReportView(APIView):
     def get(self, request, format=None):
-        # This is a simplified example. Real ICA calculation is complex and depends on specific periods and animal groups.
-        # It would involve: 
-        # 1. Filtering WeightLogs for a specific period to get weight gained.
-        # 2. Filtering FeedingLogs for the same period to get feed consumed.
-        # 3. Summing up these values and calculating ICA = Feed Consumed / Weight Gained.
-        
-        # For demonstration, let's return some dummy data or a basic calculation
-        total_feed_consumed = FeedingLog.objects.aggregate(Sum('quantity_kg'))['quantity_kg__sum'] or 0
-        total_weight_gained = WeightLog.objects.aggregate(Sum('weight_kg'))['weight_kg__sum'] or 0
+        start_date_str = request.query_params.get('start_date')
+        end_date_str = request.query_params.get('end_date')
+
+        weight_logs = WeightLog.objects.all()
+        feeding_logs = FeedingLog.objects.all()
+
+        if start_date_str and end_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                weight_logs = weight_logs.filter(log_date__range=[start_date, end_date])
+                feeding_logs = feeding_logs.filter(log_date__range=[start_date, end_date])
+            except ValueError:
+                return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        total_feed_consumed = feeding_logs.aggregate(Sum('quantity_kg'))['quantity_kg__sum'] or 0
+        total_weight_gained = weight_logs.aggregate(Sum('weight_kg'))['weight_kg__sum'] or 0
 
         ica = total_feed_consumed / total_weight_gained if total_weight_gained > 0 else 0
 
@@ -27,14 +35,23 @@ class ICAReportView(APIView):
 
 class CostPerKgGainedReportView(APIView):
     def get(self, request, format=None):
-        # This is also a simplified example. Real calculation is complex.
-        # It would involve:
-        # 1. Calculating total cost of feed from FinancialTransactions (type='Costo', related to feed).
-        # 2. Getting total weight gained from WeightLogs.
-        # 3. Calculating Cost Per Kg Gained = Total Feed Cost / Total Weight Gained.
+        start_date_str = request.query_params.get('start_date')
+        end_date_str = request.query_params.get('end_date')
 
-        total_feed_cost = FinancialTransaction.objects.filter(type='Costo').aggregate(Sum('amount'))['amount__sum'] or 0
-        total_weight_gained = WeightLog.objects.aggregate(Sum('weight_kg'))['weight_kg__sum'] or 0
+        financial_transactions = FinancialTransaction.objects.all()
+        weight_logs = WeightLog.objects.all()
+
+        if start_date_str and end_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                financial_transactions = financial_transactions.filter(transaction_date__range=[start_date, end_date])
+                weight_logs = weight_logs.filter(log_date__range=[start_date, end_date])
+            except ValueError:
+                return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        total_feed_cost = financial_transactions.filter(type='Costo').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_weight_gained = weight_logs.aggregate(Sum('weight_kg'))['weight_kg__sum'] or 0
 
         cost_per_kg_gained = total_feed_cost / total_weight_gained if total_weight_gained > 0 else 0
 
