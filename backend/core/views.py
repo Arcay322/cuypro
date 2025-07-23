@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import User, Line, Location, Animal, WeightLog
-from .serializers import UserSerializer, LineSerializer, LocationSerializer, AnimalSerializer, WeightLogSerializer
+from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent
+from .serializers import UserSerializer, LineSerializer, LocationSerializer, AnimalSerializer, WeightLogSerializer, ReproductionEventSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -21,3 +21,7 @@ class AnimalViewSet(viewsets.ModelViewSet):
 class WeightLogViewSet(viewsets.ModelViewSet):
     queryset = WeightLog.objects.all()
     serializer_class = WeightLogSerializer
+
+class ReproductionEventViewSet(viewsets.ModelViewSet):
+    queryset = ReproductionEvent.objects.all()
+    serializer_class = ReproductionEventSerializer

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Line, Location, Animal, WeightLog
+from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,3 +25,8 @@ class WeightLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeightLog
         fields = ('id', 'animal', 'log_date', 'weight_kg')
+
+class ReproductionEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReproductionEvent
+        fields = ('id', 'female', 'male', 'mating_date', 'expected_birth_date', 'actual_birth_date', 'live_births', 'dead_births')

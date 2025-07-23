@@ -7,6 +7,8 @@ import AnimalList from './components/AnimalList';
 import AnimalForm from './components/AnimalForm';
 import WeightLogList from './components/WeightLogList';
 import WeightLogForm from './components/WeightLogForm';
+import ReproductionEventList from './components/ReproductionEventList';
+import ReproductionEventForm from './components/ReproductionEventForm';
 
 function App() {
   return (
@@ -25,6 +27,9 @@ function App() {
           <li>
             <Link to="/weightlogs">Manage Weight Logs</Link>
           </li>
+          <li>
+            <Link to="/reproductionevents">Manage Reproduction Events</Link>
+          </li>
         </ul>
       </nav>
 
@@ -41,6 +46,9 @@ function App() {
         <Route path="/weightlogs" element={<WeightLogList />} />
         <Route path="/weightlogs/new" element={<WeightLogForm />} />
         <Route path="/weightlogs/edit/:id" element={<WeightLogForm />} />
+        <Route path="/reproductionevents" element={<ReproductionEventList />} />
+        <Route path="/reproductionevents/new" element={<ReproductionEventForm />} />
+        <Route path="/reproductionevents/edit/:id" element={<ReproductionEventForm />} />
         <Route path="/" element={<h1>Welcome to CuyPro!</h1>} />
       </Routes>
     </div>

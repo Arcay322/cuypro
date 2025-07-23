@@ -59,3 +59,15 @@ class WeightLog(models.Model):
 
     def __str__(self):
         return f"{self.animal.unique_tag} - {self.log_date} - {self.weight_kg} kg"
+
+class ReproductionEvent(models.Model):
+    female = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='reproduction_events_female')
+    male = models.ForeignKey(Animal, on_delete=models.SET_NULL, null=True, blank=True, related_name='reproduction_events_male')
+    mating_date = models.DateField()
+    expected_birth_date = models.DateField(null=True, blank=True)
+    actual_birth_date = models.DateField(null=True, blank=True)
+    live_births = models.IntegerField(null=True, blank=True)
+    dead_births = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Reproduction Event - Female: {self.female.unique_tag} - Mating: {self.mating_date}"
