@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Sum, F
-from core.models import Animal, WeightLog, FeedingLog, FinancialTransaction
-from datetime import datetime
+from django.db.models import Sum, F, Count, Avg
+from core.models import Animal, WeightLog, FeedingLog, FinancialTransaction, ReproductionEvent
+from datetime import datetime, timedelta
 
 class ICAReportView(APIView):
     def get(self, request, format=None):
@@ -130,4 +130,61 @@ class GDPReportView(APIView):
             'final_weight_kg': final_weight,
             'num_days': num_days,
             'gdp': round(gdp, 2)
+        }, status=status.HTTP_200_OK)
+
+class FertilityRateReportView(APIView):
+    def get(self, request, format=None):
+        # Total females put to breeding
+        total_females_breeding = Animal.objects.filter(sex='F', status='Pregnant').count() # Simplified
+        
+        # Total females that became pregnant
+        total_females_pregnant = ReproductionEvent.objects.filter(actual_birth_date__isnull=False).values('female').distinct().count()
+
+        fertility_rate = (total_females_pregnant / total_females_breeding) * 100 if total_females_breeding > 0 else 0
+
+        return Response({
+            'total_females_breeding': total_females_breeding,
+            'total_females_pregnant': total_females_pregnant,
+            'fertility_rate': round(fertility_rate, 2)
+        }, status=status.HTTP_200_OK)
+
+class ParturitionRateReportView(APIView):
+    def get(self, request, format=None):
+        # Total females that gave birth
+        total_females_gave_birth = ReproductionEvent.objects.filter(actual_birth_date__isnull=False).values('female').distinct().count()
+        
+        # Total females that were pregnant (simplified, could be more complex)
+        total_females_pregnant = Animal.objects.filter(sex='F', status='Pregnant').count()
+
+        parturition_rate = (total_females_gave_birth / total_females_pregnant) * 100 if total_females_pregnant > 0 else 0
+
+        return Response({
+            'total_females_gave_birth': total_females_gave_birth,
+            'total_females_pregnant': total_females_pregnant,
+            'parturition_rate': round(parturition_rate, 2)
+        }, status=status.HTTP_200_OK)
+
+class ProlificacyReportView(APIView):
+    def get(self, request, format=None):
+        # Total live births
+        total_live_births = ReproductionEvent.objects.aggregate(Sum('live_births'))['live_births__sum'] or 0
+        
+        # Total reproduction events with actual birth date
+        total_reproduction_events_with_birth = ReproductionEvent.objects.filter(actual_birth_date__isnull=False).count()
+
+        prolificacy = total_live_births / total_reproduction_events_with_birth if total_reproduction_events_with_birth > 0 else 0
+
+        return Response({
+            'total_live_births': total_live_births,
+            'total_reproduction_events_with_birth': total_reproduction_events_with_birth,
+            'prolificacy': round(prolificacy, 2)
+        }, status=status.HTTP_200_OK)
+
+class WPIReportView(APIView):
+    def get(self, request, format=None):
+        # Weaning Productive Index (WPI) is complex and requires more data (e.g., number of weaned animals).
+        # For now, a placeholder.
+        return Response({
+            'message': 'WPI calculation is complex and requires more data.',
+            'wpi': 0.0
         }, status=status.HTTP_200_OK)

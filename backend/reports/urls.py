@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ICAReportView, CostPerKgGainedReportView, ProfitAndLossReportView, BatchProfitabilityReportView, GDPReportView
+from .views import ICAReportView, CostPerKgGainedReportView, ProfitAndLossReportView, BatchProfitabilityReportView, GDPReportView, FertilityRateReportView, ParturitionRateReportView, ProlificacyReportView, WPIReportView
 
 urlpatterns = [
     path('ica-report/', ICAReportView.as_view(), name='ica-report'),
@@ -7,4 +7,8 @@ urlpatterns = [
     path('profit-and-loss-report/', ProfitAndLossReportView.as_view(), name='profit-and-loss-report'),
     path('batch-profitability-report/', BatchProfitabilityReportView.as_view(), name='batch-profitability-report'),
     path('gdp-report/', GDPReportView.as_view(), name='gdp-report'),
+    path('fertility-rate-report/', FertilityRateReportView.as_view(), name='fertility-rate-report'),
+    path('parturition-rate-report/', ParturitionRateReportView.as_view(), name='parturition-rate-report'),
+    path('prolificacy-report/', ProlificacyReportView.as_view(), name='prolificacy-report'),
+    path('wpi-report/', WPIReportView.as_view(), name='wpi-report'),
 ]

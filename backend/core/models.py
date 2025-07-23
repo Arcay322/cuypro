@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import timedelta
 
 class User(AbstractUser):
     # Add any additional fields for your user model here
@@ -52,6 +53,22 @@ class Animal(models.Model):
     def __str__(self):
         return self.unique_tag
 
+    def is_breeding_ready(self):
+        # Example logic: Female ready at 3 months and 800g, Male at 4 months and 1kg
+        today = models.DateField.today()
+        age_in_days = (today - self.birth_date).days
+
+        latest_weight = self.weightlog_set.order_by('-log_date').first()
+        current_weight_kg = latest_weight.weight_kg if latest_weight else 0
+
+        if self.sex == 'F':
+            # Female: 3 months (approx 90 days) and 800g
+            return age_in_days >= 90 and current_weight_kg >= 0.8
+        elif self.sex == 'M':
+            # Male: 4 months (approx 120 days) and 1kg
+            return age_in_days >= 120 and current_weight_kg >= 1.0
+        return False
+
 class WeightLog(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
     log_date = models.DateField()
@@ -68,6 +85,11 @@ class ReproductionEvent(models.Model):
     actual_birth_date = models.DateField(null=True, blank=True)
     live_births = models.IntegerField(null=True, blank=True)
     dead_births = models.IntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.mating_date and not self.expected_birth_date:
+            self.expected_birth_date = self.mating_date + timedelta(days=67) # Average gestation period
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Reproduction Event - Female: {self.female.unique_tag} - Mating: {self.mating_date}"

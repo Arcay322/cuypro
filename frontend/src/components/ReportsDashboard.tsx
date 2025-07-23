@@ -54,9 +54,34 @@ interface GDPReport {
   gdp: number;
 }
 
+interface FertilityRateReport {
+  total_females_breeding: number;
+  total_females_pregnant: number;
+  fertility_rate: number;
+}
+
+interface ParturitionRateReport {
+  total_females_gave_birth: number;
+  total_females_pregnant: number;
+  parturition_rate: number;
+}
+
+interface ProlificacyReport {
+  total_live_births: number;
+  total_reproduction_events_with_birth: number;
+  prolificacy: number;
+}
+
+interface WPIReport {
+  message: string;
+  wpi: number;
+}
+
 interface Animal {
   id: number;
   unique_tag: string;
+  sex: string;
+  is_breeding_ready: boolean;
 }
 
 function ReportsDashboard() {
@@ -65,7 +90,12 @@ function ReportsDashboard() {
   const [profitAndLossReport, setProfitAndLossReport] = useState<ProfitAndLossReport | null>(null);
   const [batchProfitabilityReport, setBatchProfitabilityReport] = useState<BatchProfitabilityReport | null>(null);
   const [gdpReport, setGdpReport] = useState<GDPReport | null>(null);
+  const [fertilityRateReport, setFertilityRateReport] = useState<FertilityRateReport | null>(null);
+  const [parturitionRateReport, setParturitionRateReport] = useState<ParturitionRateReport | null>(null);
+  const [prolificacyReport, setProlificacyReport] = useState<ProlificacyReport | null>(null);
+  const [wpiReport, setWpiReport] = useState<WPIReport | null>(null);
   const [animals, setAnimals] = useState<Animal[]>([]); // For animal selection in GDP report
+  const [breedingReadyAnimals, setBreedingReadyAnimals] = useState<Animal[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -92,9 +122,22 @@ function ReportsDashboard() {
         const batchProfitRes = await axios.get('http://localhost:8000/api/reports/batch-profitability-report/');
         setBatchProfitabilityReport(batchProfitRes.data);
 
-        // Fetch animals for GDP report dropdown
+        const fertilityRes = await axios.get('http://localhost:8000/api/reports/fertility-rate-report/');
+        setFertilityRateReport(fertilityRes.data);
+
+        const parturitionRes = await axios.get('http://localhost:8000/api/reports/parturition-rate-report/');
+        setParturitionRateReport(parturitionRes.data);
+
+        const prolificacyRes = await axios.get('http://localhost:8000/api/reports/prolificacy-report/');
+        setProlificacyReport(prolificacyRes.data);
+
+        const wpiRes = await axios.get('http://localhost:8000/api/reports/wpi-report/');
+        setWpiReport(wpiRes.data);
+
+        // Fetch animals for GDP report dropdown and breeding ready animals
         const animalsRes = await axios.get('http://localhost:8000/api/animals/');
         setAnimals(animalsRes.data);
+        setBreedingReadyAnimals(animalsRes.data.filter((animal: Animal) => animal.is_breeding_ready));
 
         // Fetch GDP report if animal is selected
         if (gdpAnimalId) {
@@ -285,6 +328,98 @@ function ReportsDashboard() {
                 </div>
               ) : (
                 <p>Select an animal and date range to view GDP.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-6">
+          <div className="card mb-3">
+            <div className="card-header"><h3>Fertility Rate Report</h3></div>
+            <div className="card-body">
+              {fertilityRateReport ? (
+                <div>
+                  <p>Total Females for Breeding: {fertilityRateReport.total_females_breeding}</p>
+                  <p>Total Pregnant Females: {fertilityRateReport.total_females_pregnant}</p>
+                  <p>Fertility Rate: {fertilityRateReport.fertility_rate}%</p>
+                </div>
+              ) : (
+                <p>Loading Fertility Rate Report...</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6">
+          <div className="card mb-3">
+            <div className="card-header"><h3>Parturition Rate Report</h3></div>
+            <div className="card-body">
+              {parturitionRateReport ? (
+                <div>
+                  <p>Total Females Gave Birth: {parturitionRateReport.total_females_gave_birth}</p>
+                  <p>Total Pregnant Females (Simplified): {parturitionRateReport.total_females_pregnant}</p>
+                  <p>Parturition Rate: {parturitionRateReport.parturition_rate}%</p>
+                </div>
+              ) : (
+                <p>Loading Parturition Rate Report...</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-6">
+          <div className="card mb-3">
+            <div className="card-header"><h3>Prolificacy Report</h3></div>
+            <div className="card-body">
+              {prolificacyReport ? (
+                <div>
+                  <p>Total Live Births: {prolificacyReport.total_live_births}</p>
+                  <p>Total Reproduction Events with Birth: {prolificacyReport.total_reproduction_events_with_birth}</p>
+                  <p>Prolificacy: {prolificacyReport.prolificacy}</p>
+                </div>
+              ) : (
+                <p>Loading Prolificacy Report...</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6">
+          <div className="card mb-3">
+            <div className="card-header"><h3>WPI Report (Weaning Productive Index)</h3></div>
+            <div className="card-body">
+              {wpiReport ? (
+                <div>
+                  <p>{wpiReport.message}</p>
+                  <p>WPI: {wpiReport.wpi}</p>
+                </div>
+              ) : (
+                <p>Loading WPI Report...</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card mb-3">
+            <div className="card-header"><h3>Animals Ready for Breeding</h3></div>
+            <div className="card-body">
+              {breedingReadyAnimals.length > 0 ? (
+                <ul className="list-group">
+                  {breedingReadyAnimals.map(animal => (
+                    <li key={animal.id} className="list-group-item">
+                      {animal.unique_tag} ({animal.sex})
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No animals currently ready for breeding based on defined criteria.</p>
               )}
             </div>
           </div>
