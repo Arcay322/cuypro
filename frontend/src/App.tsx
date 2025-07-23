@@ -19,6 +19,7 @@ import FinancialTransactionList from './components/FinancialTransactionList';
 import FinancialTransactionForm from './components/FinancialTransactionForm';
 import FeedingLogList from './components/FeedingLogList';
 import FeedingLogForm from './components/FeedingLogForm';
+import ReportsDashboard from './components/ReportsDashboard';
 
 function App() {
   return (
@@ -55,6 +56,9 @@ function App() {
           <li>
             <Link to="/feedinglogs">Manage Feeding Logs</Link>
           </li>
+          <li>
+            <Link to="/reports">Reports Dashboard</Link>
+          </li>
         </ul>
       </nav>
 
@@ -89,6 +93,7 @@ function App() {
         <Route path="/feedinglogs" element={<FeedingLogList />} />
         <Route path="/feedinglogs/new" element={<FeedingLogForm />} />
         <Route path="/feedinglogs/edit/:id" element={<FeedingLogForm />} />
+        <Route path="/reports" element={<ReportsDashboard />} />
         <Route path="/" element={<h1>Welcome to CuyPro!</h1>} />
       </Routes>
     </div>
