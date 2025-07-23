@@ -86,49 +86,52 @@ function HealthLogForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Health Log' : 'Add New Health Log'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="animal">Animal:</label>
-          <select id="animal" value={animal || ''} onChange={(e) => setAnimal(e.target.value ? parseInt(e.target.value) : null)} required>
+        <div className="mb-3">
+          <label htmlFor="animal" className="form-label">Animal:</label>
+          <select id="animal" className="form-select" value={animal || ''} onChange={(e) => setAnimal(e.target.value ? parseInt(e.target.value) : null)} required>
             <option value="">-- Select Animal --</option>
             {animals.map(a => (
               <option key={a.id} value={a.id}>{a.unique_tag}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="logDate">Log Date:</label>
+        <div className="mb-3">
+          <label htmlFor="logDate" className="form-label">Log Date:</label>
           <input
             type="date"
             id="logDate"
+            className="form-control"
             value={logDate}
             onChange={(e) => setLogDate(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="diagnosis">Diagnosis:</label>
+        <div className="mb-3">
+          <label htmlFor="diagnosis" className="form-label">Diagnosis:</label>
           <textarea
             id="diagnosis"
+            className="form-control"
             value={diagnosis}
             onChange={(e) => setDiagnosis(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="notes">Notes:</label>
+        <div className="mb-3">
+          <label htmlFor="notes" className="form-label">Notes:</label>
           <textarea
             id="notes"
+            className="form-control"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
-        <button type="submit">{id ? 'Update Health Log' : 'Add Health Log'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Health Log' : 'Add Health Log'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/healthlogs')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/healthlogs')}>Cancel</button>
     </div>
   );
 }

@@ -58,22 +58,26 @@ function ReproductionEventList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Reproduction Events</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/reproductionevents/new">Add New Reproduction Event</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/reproductionevents/new" className="btn btn-primary mb-3">Add New Reproduction Event</Link>
       {reproductionEvents.length === 0 && !error ? (
         <p>No reproduction events found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {reproductionEvents.map(event => (
-            <li key={event.id}>
-              Female: {getAnimalTag(event.female)} - Male: {getAnimalTag(event.male)} - Mating: {event.mating_date}
-              {event.actual_birth_date && ` - Born: ${event.actual_birth_date}`}
-              {event.live_births !== null && ` - Live: ${event.live_births}`}
-              {event.dead_births !== null && ` - Dead: ${event.dead_births}`}
-              <Link to={`/reproductionevents/edit/${event.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(event.id)}>Delete</button>
+            <li key={event.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                Female: {getAnimalTag(event.female)} - Male: {getAnimalTag(event.male)} - Mating: {event.mating_date}
+                {event.actual_birth_date && ` - Born: ${event.actual_birth_date}`}
+                {event.live_births !== null && ` - Live: ${event.live_births}`}
+                {event.dead_births !== null && ` - Dead: ${event.dead_births}`}
+              </div>
+              <div>
+                <Link to={`/reproductionevents/edit/${event.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(event.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

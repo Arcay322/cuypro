@@ -59,31 +59,33 @@ function LineForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Line' : 'Add New Line'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">Name:</label>
           <input
             type="text"
             id="name"
+            className="form-control"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="description">Description:</label>
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">Description:</label>
           <textarea
             id="description"
+            className="form-control"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <button type="submit">{id ? 'Update Line' : 'Add Line'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Line' : 'Add Line'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/lines')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/lines')}>Cancel</button>
     </div>
   );
 }

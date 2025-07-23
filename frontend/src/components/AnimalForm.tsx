@@ -110,40 +110,42 @@ function AnimalForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Animal' : 'Add New Animal'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="uniqueTag">Unique Tag:</label>
+        <div className="mb-3">
+          <label htmlFor="uniqueTag" className="form-label">Unique Tag:</label>
           <input
             type="text"
             id="uniqueTag"
+            className="form-control"
             value={uniqueTag}
             onChange={(e) => setUniqueTag(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="birthDate">Birth Date:</label>
+        <div className="mb-3">
+          <label htmlFor="birthDate" className="form-label">Birth Date:</label>
           <input
             type="date"
             id="birthDate"
+            className="form-control"
             value={birthDate}
             onChange={(e) => setBirthDate(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="sex">Sex:</label>
-          <select id="sex" value={sex} onChange={(e) => setSex(e.target.value)}>
+        <div className="mb-3">
+          <label htmlFor="sex" className="form-label">Sex:</label>
+          <select id="sex" className="form-select" value={sex} onChange={(e) => setSex(e.target.value)}>
             <option value="M">Male</option>
             <option value="F">Female</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="status">Status:</label>
-          <select id="status" value={status} onChange={(e) => setStatus(e.target.value)}>
+        <div className="mb-3">
+          <label htmlFor="status" className="form-label">Status:</label>
+          <select id="status" className="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="Active">Active</option>
             <option value="In Quarantine">In Quarantine</option>
             <option value="Sick">Sick</option>
@@ -153,45 +155,45 @@ function AnimalForm() {
             <option value="Deceased">Deceased</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="line">Line:</label>
-          <select id="line" value={line || ''} onChange={(e) => setLine(e.target.value ? parseInt(e.target.value) : null)}>
+        <div className="mb-3">
+          <label htmlFor="line" className="form-label">Line:</label>
+          <select id="line" className="form-select" value={line || ''} onChange={(e) => setLine(e.target.value ? parseInt(e.target.value) : null)}>
             <option value="">-- Select Line --</option>
             {lines.map(l => (
               <option key={l.id} value={l.id}>{l.name}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="sire">Sire:</label>
-          <select id="sire" value={sire || ''} onChange={(e) => setSire(e.target.value ? parseInt(e.target.value) : null)}>
+        <div className="mb-3">
+          <label htmlFor="sire" className="form-label">Sire:</label>
+          <select id="sire" className="form-select" value={sire || ''} onChange={(e) => setSire(e.target.value ? parseInt(e.target.value) : null)}>
             <option value="">-- Select Sire --</option>
             {animals.filter(a => a.sex === 'M').map(a => (
               <option key={a.id} value={a.id}>{a.unique_tag}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="dam">Dam:</label>
-          <select id="dam" value={dam || ''} onChange={(e) => setDam(e.target.value ? parseInt(e.target.value) : null)}>
+        <div className="mb-3">
+          <label htmlFor="dam" className="form-label">Dam:</label>
+          <select id="dam" className="form-select" value={dam || ''} onChange={(e) => setDam(e.target.value ? parseInt(e.target.value) : null)}>
             <option value="">-- Select Dam --</option>
             {animals.filter(a => a.sex === 'F').map(a => (
               <option key={a.id} value={a.id}>{a.unique_tag}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="location">Location:</label>
-          <select id="location" value={location || ''} onChange={(e) => setLocation(e.target.value ? parseInt(e.target.value) : null)}>
+        <div className="mb-3">
+          <label htmlFor="location" className="form-label">Location:</label>
+          <select id="location" className="form-select" value={location || ''} onChange={(e) => setLocation(e.target.value ? parseInt(e.target.value) : null)}>
             <option value="">-- Select Location --</option>
             {locations.map(loc => (
               <option key={loc.id} value={loc.id}>{loc.name}</option>
             ))}
           </select>
         </div>
-        <button type="submit">{id ? 'Update Animal' : 'Add Animal'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Animal' : 'Add Animal'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/animals')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/animals')}>Cancel</button>
     </div>
   );
 }

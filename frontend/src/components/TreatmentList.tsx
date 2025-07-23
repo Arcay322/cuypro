@@ -80,20 +80,24 @@ function TreatmentList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Treatments</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/treatments/new">Add New Treatment</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/treatments/new" className="btn btn-primary mb-3">Add New Treatment</Link>
       {treatments.length === 0 && !error ? (
         <p>No treatments found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {treatments.map(treatment => (
-            <li key={treatment.id}>
-              Health Log: {getHealthLogInfo(treatment.health_log)} - Medication: {getMedicationName(treatment.medication)} - Dosage: {treatment.dosage}
-              {treatment.withdrawal_end_date && ` - Withdrawal End: ${treatment.withdrawal_end_date}`}
-              <Link to={`/treatments/edit/${treatment.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(treatment.id)}>Delete</button>
+            <li key={treatment.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                Health Log: {getHealthLogInfo(treatment.health_log)} - Medication: {getMedicationName(treatment.medication)} - Dosage: {treatment.dosage}
+                {treatment.withdrawal_end_date && ` - Withdrawal End: ${treatment.withdrawal_end_date}`}
+              </div>
+              <div>
+                <Link to={`/treatments/edit/${treatment.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(treatment.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

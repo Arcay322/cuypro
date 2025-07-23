@@ -35,19 +35,23 @@ function LineList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Lines</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/lines/new">Add New Line</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/lines/new" className="btn btn-primary mb-3">Add New Line</Link>
       {lines.length === 0 && !error ? (
         <p>No lines found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {lines.map(line => (
-            <li key={line.id}>
-              {line.name} - {line.description}
-              <Link to={`/lines/edit/${line.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(line.id)}>Delete</button>
+            <li key={line.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                {line.name} - {line.description}
+              </div>
+              <div>
+                <Link to={`/lines/edit/${line.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(line.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

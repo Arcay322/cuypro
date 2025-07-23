@@ -86,53 +86,56 @@ function FeedingLogForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Feeding Log' : 'Add New Feeding Log'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="location">Location:</label>
-          <select id="location" value={location || ''} onChange={(e) => setLocation(e.target.value ? parseInt(e.target.value) : null)} required>
+        <div className="mb-3">
+          <label htmlFor="location" className="form-label">Location:</label>
+          <select id="location" className="form-select" value={location || ''} onChange={(e) => setLocation(e.target.value ? parseInt(e.target.value) : null)} required>
             <option value="">-- Select Location --</option>
             {locations.map(loc => (
               <option key={loc.id} value={loc.id}>{loc.name}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="logDate">Log Date:</label>
+        <div className="mb-3">
+          <label htmlFor="logDate" className="form-label">Log Date:</label>
           <input
             type="date"
             id="logDate"
+            className="form-control"
             value={logDate}
             onChange={(e) => setLogDate(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="feedType">Feed Type:</label>
+        <div className="mb-3">
+          <label htmlFor="feedType" className="form-label">Feed Type:</label>
           <input
             type="text"
             id="feedType"
+            className="form-control"
             value={feedType}
             onChange={(e) => setFeedType(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="quantityKg">Quantity (kg):</label>
+        <div className="mb-3">
+          <label htmlFor="quantityKg" className="form-label">Quantity (kg):</label>
           <input
             type="number"
             id="quantityKg"
             step="0.01"
+            className="form-control"
             value={quantityKg}
             onChange={(e) => setQuantityKg(parseFloat(e.target.value))}
             required
           />
         </div>
-        <button type="submit">{id ? 'Update Feeding Log' : 'Add Feeding Log'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Feeding Log' : 'Add Feeding Log'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/feedinglogs')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/feedinglogs')}>Cancel</button>
     </div>
   );
 }

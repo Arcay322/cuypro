@@ -70,49 +70,52 @@ function LocationForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Location' : 'Add New Location'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">Name:</label>
           <input
             type="text"
             id="name"
+            className="form-control"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="type">Type:</label>
-          <select id="type" value={type} onChange={(e) => setType(e.target.value)}>
+        <div className="mb-3">
+          <label htmlFor="type" className="form-label">Type:</label>
+          <select id="type" className="form-select" value={type} onChange={(e) => setType(e.target.value)}>
             <option value="Poza">Poza</option>
             <option value="Jaula">Jaula</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="capacity">Capacity:</label>
+        <div className="mb-3">
+          <label htmlFor="capacity" className="form-label">Capacity:</label>
           <input
             type="number"
             id="capacity"
+            className="form-control"
             value={capacity}
             onChange={(e) => setCapacity(parseInt(e.target.value))}
             required
           />
         </div>
-        <div>
-          <label htmlFor="lastCleanedDate">Last Cleaned Date:</label>
+        <div className="mb-3">
+          <label htmlFor="lastCleanedDate" className="form-label">Last Cleaned Date:</label>
           <input
             type="date"
             id="lastCleanedDate"
+            className="form-control"
             value={lastCleanedDate || ''}
             onChange={(e) => setLastCleanedDate(e.target.value)}
           />
         </div>
-        <button type="submit">{id ? 'Update Location' : 'Add Location'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Location' : 'Add Location'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/locations')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/locations')}>Cancel</button>
     </div>
   );
 }

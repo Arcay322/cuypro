@@ -37,20 +37,24 @@ function LocationList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Locations</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/locations/new">Add New Location</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/locations/new" className="btn btn-primary mb-3">Add New Location</Link>
       {locations.length === 0 && !error ? (
         <p>No locations found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {locations.map(location => (
-            <li key={location.id}>
-              {location.name} ({location.type}) - Capacity: {location.capacity}
-              {location.last_cleaned_date && ` - Last Cleaned: ${location.last_cleaned_date}`}
-              <Link to={`/locations/edit/${location.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(location.id)}>Delete</button>
+            <li key={location.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                {location.name} ({location.type}) - Capacity: {location.capacity}
+                {location.last_cleaned_date && ` - Last Cleaned: ${location.last_cleaned_date}`}
+              </div>
+              <div>
+                <Link to={`/locations/edit/${location.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(location.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

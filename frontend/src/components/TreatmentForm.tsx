@@ -111,50 +111,52 @@ function TreatmentForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Treatment' : 'Add New Treatment'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="healthLog">Health Log:</label>
-          <select id="healthLog" value={healthLog || ''} onChange={(e) => setHealthLog(e.target.value ? parseInt(e.target.value) : null)} required>
+        <div className="mb-3">
+          <label htmlFor="healthLog" className="form-label">Health Log:</label>
+          <select id="healthLog" className="form-select" value={healthLog || ''} onChange={(e) => setHealthLog(e.target.value ? parseInt(e.target.value) : null)} required>
             <option value="">-- Select Health Log --</option>
             {healthLogs.map(log => (
               <option key={log.id} value={log.id}>{getHealthLogOptionLabel(log)}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="medication">Medication:</label>
-          <select id="medication" value={medication || ''} onChange={(e) => setMedication(e.target.value ? parseInt(e.target.value) : null)}>
+        <div className="mb-3">
+          <label htmlFor="medication" className="form-label">Medication:</label>
+          <select id="medication" className="form-select" value={medication || ''} onChange={(e) => setMedication(e.target.value ? parseInt(e.target.value) : null)}>
             <option value="">-- Select Medication --</option>
             {medications.map(med => (
               <option key={med.id} value={med.id}>{med.name}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="dosage">Dosage:</label>
+        <div className="mb-3">
+          <label htmlFor="dosage" className="form-label">Dosage:</label>
           <input
             type="text"
             id="dosage"
+            className="form-control"
             value={dosage}
             onChange={(e) => setDosage(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="withdrawalEndDate">Withdrawal End Date:</label>
+        <div className="mb-3">
+          <label htmlFor="withdrawalEndDate" className="form-label">Withdrawal End Date:</label>
           <input
             type="date"
             id="withdrawalEndDate"
+            className="form-control"
             value={withdrawalEndDate || ''}
             onChange={(e) => setWithdrawalEndDate(e.target.value)}
           />
         </div>
-        <button type="submit">{id ? 'Update Treatment' : 'Add Treatment'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Treatment' : 'Add Treatment'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/treatments')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/treatments')}>Cancel</button>
     </div>
   );
 }

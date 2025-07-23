@@ -24,45 +24,51 @@ import ReportsDashboard from './components/ReportsDashboard';
 function App() {
   return (
     <div>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/lines">Manage Lines</Link>
-          </li>
-          <li>
-            <Link to="/locations">Manage Locations</Link>
-          </li>
-          <li>
-            <Link to="/animals">Manage Animals</Link>
-          </li>
-          <li>
-            <Link to="/weightlogs">Manage Weight Logs</Link>
-          </li>
-          <li>
-            <Link to="/reproductionevents">Manage Reproduction Events</Link>
-          </li>
-          <li>
-            <Link to="/medications">Manage Medications</Link>
-          </li>
-          <li>
-            <Link to="/healthlogs">Manage Health Logs</Link>
-          </li>
-          <li>
-            <Link to="/treatments">Manage Treatments</Link>
-          </li>
-          <li>
-            <Link to="/financialtransactions">Manage Financial Transactions</Link>
-          </li>
-          <li>
-            <Link to="/feedinglogs">Manage Feeding Logs</Link>
-          </li>
-          <li>
-            <Link to="/reports">Reports Dashboard</Link>
-          </li>
-        </ul>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className="container-fluid">
+          <Link className="navbar-brand" to="/">CuyPro</Link>
+          <div className="collapse navbar-collapse">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <Link className="nav-link" to="/lines">Manage Lines</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/locations">Manage Locations</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/animals">Manage Animals</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/weightlogs">Manage Weight Logs</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/reproductionevents">Manage Reproduction Events</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/medications">Manage Medications</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/healthlogs">Manage Health Logs</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/treatments">Manage Treatments</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/financialtransactions">Manage Financial Transactions</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/feedinglogs">Manage Feeding Logs</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/reports">Reports Dashboard</Link>
+              </li>
+            </ul>
+          </div>
+        </div>
       </nav>
 
-      <Routes>
+      <div className="container mt-3">
+        <Routes>
         <Route path="/lines" element={<LineList />} />
         <Route path="/lines/new" element={<LineForm />} />
         <Route path="/lines/edit/:id" element={<LineForm />} />
@@ -96,6 +102,7 @@ function App() {
         <Route path="/reports" element={<ReportsDashboard />} />
         <Route path="/" element={<h1>Welcome to CuyPro!</h1>} />
       </Routes>
+      </div>
     </div>
   );
 }

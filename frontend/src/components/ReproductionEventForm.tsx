@@ -99,77 +99,82 @@ function ReproductionEventForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Reproduction Event' : 'Add New Reproduction Event'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="female">Female:</label>
-          <select id="female" value={female || ''} onChange={(e) => setFemale(e.target.value ? parseInt(e.target.value) : null)} required>
+        <div className="mb-3">
+          <label htmlFor="female" className="form-label">Female:</label>
+          <select id="female" className="form-select" value={female || ''} onChange={(e) => setFemale(e.target.value ? parseInt(e.target.value) : null)} required>
             <option value="">-- Select Female --</option>
             {animals.filter(a => a.sex === 'F').map(a => (
               <option key={a.id} value={a.id}>{a.unique_tag}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="male">Male:</label>
-          <select id="male" value={male || ''} onChange={(e) => setMale(e.target.value ? parseInt(e.target.value) : null)}>
+        <div className="mb-3">
+          <label htmlFor="male" className="form-label">Male:</label>
+          <select id="male" className="form-select" value={male || ''} onChange={(e) => setMale(e.target.value ? parseInt(e.target.value) : null)}>
             <option value="">-- Select Male --</option>
             {animals.filter(a => a.sex === 'M').map(a => (
               <option key={a.id} value={a.id}>{a.unique_tag}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="matingDate">Mating Date:</label>
+        <div className="mb-3">
+          <label htmlFor="matingDate" className="form-label">Mating Date:</label>
           <input
             type="date"
             id="matingDate"
+            className="form-control"
             value={matingDate}
             onChange={(e) => setMatingDate(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="expectedBirthDate">Expected Birth Date:</label>
+        <div className="mb-3">
+          <label htmlFor="expectedBirthDate" className="form-label">Expected Birth Date:</label>
           <input
             type="date"
             id="expectedBirthDate"
+            className="form-control"
             value={expectedBirthDate || ''}
             onChange={(e) => setExpectedBirthDate(e.target.value)}
           />
         </div>
-        <div>
-          <label htmlFor="actualBirthDate">Actual Birth Date:</label>
+        <div className="mb-3">
+          <label htmlFor="actualBirthDate" className="form-label">Actual Birth Date:</label>
           <input
             type="date"
             id="actualBirthDate"
+            className="form-control"
             value={actualBirthDate || ''}
             onChange={(e) => setActualBirthDate(e.target.value)}
           />
         </div>
-        <div>
-          <label htmlFor="liveBirths">Live Births:</label>
+        <div className="mb-3">
+          <label htmlFor="liveBirths" className="form-label">Live Births:</label>
           <input
             type="number"
             id="liveBirths"
+            className="form-control"
             value={liveBirths || ''}
             onChange={(e) => setLiveBirths(e.target.value ? parseInt(e.target.value) : null)}
           />
         </div>
-        <div>
-          <label htmlFor="deadBirths">Dead Births:</label>
+        <div className="mb-3">
+          <label htmlFor="deadBirths" className="form-label">Dead Births:</label>
           <input
             type="number"
             id="deadBirths"
+            className="form-control"
             value={deadBirths || ''}
             onChange={(e) => setDeadBirths(e.target.value ? parseInt(e.target.value) : null)}
           />
         </div>
-        <button type="submit">{id ? 'Update Event' : 'Add Event'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Event' : 'Add Event'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/reproductionevents')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/reproductionevents')}>Cancel</button>
     </div>
   );
 }

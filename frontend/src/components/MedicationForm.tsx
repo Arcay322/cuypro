@@ -62,33 +62,35 @@ function MedicationForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Medication' : 'Add New Medication'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">Name:</label>
           <input
             type="text"
             id="name"
+            className="form-control"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="withdrawalPeriodDays">Withdrawal Period (Days):</label>
+        <div className="mb-3">
+          <label htmlFor="withdrawalPeriodDays" className="form-label">Withdrawal Period (Days):</label>
           <input
             type="number"
             id="withdrawalPeriodDays"
+            className="form-control"
             value={withdrawalPeriodDays}
             onChange={(e) => setWithdrawalPeriodDays(parseInt(e.target.value))}
             required
           />
         </div>
-        <button type="submit">{id ? 'Update Medication' : 'Add Medication'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Medication' : 'Add Medication'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/medications')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/medications')}>Cancel</button>
     </div>
   );
 }

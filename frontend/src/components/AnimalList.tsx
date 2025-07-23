@@ -71,19 +71,23 @@ function AnimalList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Animals</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/animals/new">Add New Animal</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/animals/new" className="btn btn-primary mb-3">Add New Animal</Link>
       {animals.length === 0 && !error ? (
         <p>No animals found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {animals.map(animal => (
-            <li key={animal.id}>
-              {animal.unique_tag} - {animal.sex} - {animal.status} - Line: {getLineName(animal.line)} - Location: {getLocationName(animal.location)}
-              <Link to={`/animals/edit/${animal.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(animal.id)}>Delete</button>
+            <li key={animal.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                {animal.unique_tag} - {animal.sex} - {animal.status} - Line: {getLineName(animal.line)} - Location: {getLocationName(animal.location)}
+              </div>
+              <div>
+                <Link to={`/animals/edit/${animal.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(animal.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

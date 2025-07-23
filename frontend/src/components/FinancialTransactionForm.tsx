@@ -74,58 +74,62 @@ function FinancialTransactionForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Financial Transaction' : 'Add New Financial Transaction'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="transactionDate">Transaction Date:</label>
+        <div className="mb-3">
+          <label htmlFor="transactionDate" className="form-label">Transaction Date:</label>
           <input
             type="date"
             id="transactionDate"
+            className="form-control"
             value={transactionDate}
             onChange={(e) => setTransactionDate(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="type">Type:</label>
-          <select id="type" value={type} onChange={(e) => setType(e.target.value)}>
+        <div className="mb-3">
+          <label htmlFor="type" className="form-label">Type:</label>
+          <select id="type" className="form-select" value={type} onChange={(e) => setType(e.target.value)}>
             <option value="Costo">Costo</option>
             <option value="Ingreso">Ingreso</option>
           </select>
         </div>
-        <div>
-          <label htmlFor="amount">Amount:</label>
+        <div className="mb-3">
+          <label htmlFor="amount" className="form-label">Amount:</label>
           <input
             type="number"
             id="amount"
             step="0.01"
+            className="form-control"
             value={amount}
             onChange={(e) => setAmount(parseFloat(e.target.value))}
             required
           />
         </div>
-        <div>
-          <label htmlFor="description">Description:</label>
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">Description:</label>
           <textarea
             id="description"
+            className="form-control"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <div>
-          <label htmlFor="relatedEntityId">Related Entity ID (Optional):</label>
+        <div className="mb-3">
+          <label htmlFor="relatedEntityId" className="form-label">Related Entity ID (Optional):</label>
           <input
             type="number"
             id="relatedEntityId"
+            className="form-control"
             value={relatedEntityId || ''}
             onChange={(e) => setRelatedEntityId(e.target.value ? parseInt(e.target.value) : null)}
           />
         </div>
-        <button type="submit">{id ? 'Update Transaction' : 'Add Transaction'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Transaction' : 'Add Transaction'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/financialtransactions')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/financialtransactions')}>Cancel</button>
     </div>
   );
 }

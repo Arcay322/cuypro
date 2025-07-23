@@ -54,19 +54,23 @@ function FeedingLogList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Feeding Logs</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/feedinglogs/new">Add New Feeding Log</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/feedinglogs/new" className="btn btn-primary mb-3">Add New Feeding Log</Link>
       {feedingLogs.length === 0 && !error ? (
         <p>No feeding logs found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {feedingLogs.map(log => (
-            <li key={log.id}>
-              Location: {getLocationName(log.location)} - Date: {log.log_date} - Type: {log.feed_type} - Quantity: {log.quantity_kg} kg
-              <Link to={`/feedinglogs/edit/${log.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(log.id)}>Delete</button>
+            <li key={log.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                Location: {getLocationName(log.location)} - Date: {log.log_date} - Type: {log.feed_type} - Quantity: {log.quantity_kg} kg
+              </div>
+              <div>
+                <Link to={`/feedinglogs/edit/${log.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(log.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

@@ -54,19 +54,23 @@ function HealthLogList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Health Logs</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/healthlogs/new">Add New Health Log</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/healthlogs/new" className="btn btn-primary mb-3">Add New Health Log</Link>
       {healthLogs.length === 0 && !error ? (
         <p>No health logs found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {healthLogs.map(log => (
-            <li key={log.id}>
-              Animal: {getAnimalTag(log.animal)} - Date: {log.log_date} - Diagnosis: {log.diagnosis}
-              <Link to={`/healthlogs/edit/${log.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(log.id)}>Delete</button>
+            <li key={log.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                Animal: {getAnimalTag(log.animal)} - Date: {log.log_date} - Diagnosis: {log.diagnosis}
+              </div>
+              <div>
+                <Link to={`/healthlogs/edit/${log.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(log.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

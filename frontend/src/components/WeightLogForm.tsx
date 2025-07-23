@@ -82,43 +82,45 @@ function WeightLogForm() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>{id ? 'Edit Weight Log' : 'Add New Weight Log'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="animal">Animal:</label>
-          <select id="animal" value={animal || ''} onChange={(e) => setAnimal(e.target.value ? parseInt(e.target.value) : null)} required>
+        <div className="mb-3">
+          <label htmlFor="animal" className="form-label">Animal:</label>
+          <select id="animal" className="form-select" value={animal || ''} onChange={(e) => setAnimal(e.target.value ? parseInt(e.target.value) : null)} required>
             <option value="">-- Select Animal --</option>
             {animals.map(a => (
               <option key={a.id} value={a.id}>{a.unique_tag}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label htmlFor="logDate">Log Date:</label>
+        <div className="mb-3">
+          <label htmlFor="logDate" className="form-label">Log Date:</label>
           <input
             type="date"
             id="logDate"
+            className="form-control"
             value={logDate}
             onChange={(e) => setLogDate(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label htmlFor="weightKg">Weight (kg):</label>
+        <div className="mb-3">
+          <label htmlFor="weightKg" className="form-label">Weight (kg):</label>
           <input
             type="number"
             id="weightKg"
             step="0.01"
+            className="form-control"
             value={weightKg}
             onChange={(e) => setWeightKg(parseFloat(e.target.value))}
             required
           />
         </div>
-        <button type="submit">{id ? 'Update Weight Log' : 'Add Weight Log'}</button>
+        <button type="submit" className="btn btn-primary">{id ? 'Update Weight Log' : 'Add Weight Log'}</button>
+        <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate('/weightlogs')}>Cancel</button>
       </form>
-      <button onClick={() => navigate('/weightlogs')}>Cancel</button>
     </div>
   );
 }

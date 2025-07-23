@@ -35,19 +35,23 @@ function MedicationList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Medications</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/medications/new">Add New Medication</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/medications/new" className="btn btn-primary mb-3">Add New Medication</Link>
       {medications.length === 0 && !error ? (
         <p>No medications found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {medications.map(medication => (
-            <li key={medication.id}>
-              {medication.name} - Withdrawal Period: {medication.withdrawal_period_days} days
-              <Link to={`/medications/edit/${medication.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(medication.id)}>Delete</button>
+            <li key={medication.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                {medication.name} - Withdrawal Period: {medication.withdrawal_period_days} days
+              </div>
+              <div>
+                <Link to={`/medications/edit/${medication.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(medication.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>

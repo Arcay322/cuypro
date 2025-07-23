@@ -38,20 +38,24 @@ function FinancialTransactionList() {
   };
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Financial Transactions</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Link to="/financialtransactions/new">Add New Transaction</Link>
+      {error && <div className="alert alert-danger" role="alert">{error}</div>}
+      <Link to="/financialtransactions/new" className="btn btn-primary mb-3">Add New Transaction</Link>
       {financialTransactions.length === 0 && !error ? (
         <p>No financial transactions found.</p>
       ) : (
-        <ul>
+        <ul className="list-group">
           {financialTransactions.map(transaction => (
-            <li key={transaction.id}>
-              {transaction.transaction_date} - {transaction.type}: {transaction.amount} - {transaction.description}
-              {transaction.related_entity_id && ` (Related Entity ID: ${transaction.related_entity_id})`}
-              <Link to={`/financialtransactions/edit/${transaction.id}`}>Edit</Link>
-              <button onClick={() => handleDelete(transaction.id)}>Delete</button>
+            <li key={transaction.id} className="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                {transaction.transaction_date} - {transaction.type}: {transaction.amount} - {transaction.description}
+                {transaction.related_entity_id && ` (Related Entity ID: ${transaction.related_entity_id})`}
+              </div>
+              <div>
+                <Link to={`/financialtransactions/edit/${transaction.id}`} className="btn btn-sm btn-info me-2">Edit</Link>
+                <button onClick={() => handleDelete(transaction.id)} className="btn btn-sm btn-danger">Delete</button>
+              </div>
             </li>
           ))}
         </ul>
