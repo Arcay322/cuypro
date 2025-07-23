@@ -63,9 +63,29 @@ class CostPerKgGainedReportView(APIView):
 
 class ProfitAndLossReportView(APIView):
     def get(self, request, format=None):
-        # Simplified P&L for demonstration
-        total_income = FinancialTransaction.objects.filter(type='Ingreso').aggregate(Sum('amount'))['amount__sum'] or 0
-        total_cost = FinancialTransaction.objects.filter(type='Costo').aggregate(Sum('amount'))['amount__sum'] or 0
+        start_date_str = request.query_params.get('start_date')
+        end_date_str = request.query_params.get('end_date')
+        animal_id = request.query_params.get('animal_id')
+        location_id = request.query_params.get('location_id')
+
+        transactions = FinancialTransaction.objects.all()
+
+        if start_date_str and end_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                transactions = transactions.filter(transaction_date__range=[start_date, end_date])
+            except ValueError:
+                return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if animal_id:
+            transactions = transactions.filter(related_entity_id=animal_id, type__in=['Costo', 'Ingreso']) # Assuming related_entity_id can be animal_id
+        elif location_id:
+            # This would require a more complex join or assumption about related_entity_id for locations
+            return Response({'error': 'Filtering by location_id for P&L is not yet implemented.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        total_income = transactions.filter(type='Ingreso').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_cost = transactions.filter(type='Costo').aggregate(Sum('amount'))['amount__sum'] or 0
         
         profit_loss = total_income - total_cost
 
@@ -77,15 +97,40 @@ class ProfitAndLossReportView(APIView):
 
 class BatchProfitabilityReportView(APIView):
     def get(self, request, format=None):
-        # This is a placeholder. Real batch profitability would require:
-        # 1. Defining what constitutes a 'batch' (e.g., animals born in a certain period, or from a specific reproduction event).
-        # 2. Aggregating costs and incomes related to that specific batch.
-        
-        # For demonstration, let's return some dummy data.
+        animal_id = request.query_params.get('animal_id')
+        start_date_str = request.query_params.get('start_date')
+        end_date_str = request.query_params.get('end_date')
+
+        if not animal_id:
+            return Response({'error': 'animal_id is required for batch profitability.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            animal = Animal.objects.get(id=animal_id)
+        except Animal.DoesNotExist:
+            return Response({'error': 'Animal not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Filter financial transactions related to this animal (assuming related_entity_id stores animal_id)
+        transactions = FinancialTransaction.objects.filter(related_entity_id=animal_id)
+
+        if start_date_str and end_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                transactions = transactions.filter(transaction_date__range=[start_date, end_date])
+            except ValueError:
+                return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        total_income = transactions.filter(type='Ingreso').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_cost = transactions.filter(type='Costo').aggregate(Sum('amount'))['amount__sum'] or 0
+
+        profit_loss = total_income - total_cost
+
         return Response({
-            'message': 'Batch profitability report is a complex feature and requires more detailed batch definition.',
-            'example_batch_id': 1,
-            'example_profit': 150.75
+            'animal_id': animal_id,
+            'animal_tag': animal.unique_tag,
+            'total_income': total_income,
+            'total_cost': total_cost,
+            'profit_loss': profit_loss
         }, status=status.HTTP_200_OK)
 
 class GDPReportView(APIView):

@@ -40,9 +40,11 @@ interface ProfitAndLossReport {
 }
 
 interface BatchProfitabilityReport {
-  message: string;
-  example_batch_id?: number;
-  example_profit?: number;
+  animal_id: number;
+  animal_tag: string;
+  total_income: number;
+  total_cost: number;
+  profit_loss: number;
 }
 
 interface GDPReport {
@@ -126,26 +128,36 @@ function ReportsDashboard() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [gdpAnimalId, setGdpAnimalId] = useState<number | null>(null);
+  const [plAnimalId, setPlAnimalId] = useState<number | null>(null);
+  const [batchAnimalId, setBatchAnimalId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchReports = async () => {
       setError(null);
-      const params = {
+      const dateParams = {
         start_date: startDate,
         end_date: endDate,
       };
 
       try {
-        const icaRes = await axios.get('http://localhost:8000/api/reports/ica-report/', { params });
+        const icaRes = await axios.get('http://localhost:8000/api/reports/ica-report/', { params: dateParams });
         setIcaReport(icaRes.data);
 
-        const costRes = await axios.get('http://localhost:8000/api/reports/cost-per-kg-gained-report/', { params });
+        const costRes = await axios.get('http://localhost:8000/api/reports/cost-per-kg-gained-report/', { params: dateParams });
         setCostReport(costRes.data);
 
-        const profitLossRes = await axios.get('http://localhost:8000/api/reports/profit-and-loss-report/');
+        const profitLossParams: any = { ...dateParams };
+        if (plAnimalId) {
+          profitLossParams.animal_id = plAnimalId;
+        }
+        const profitLossRes = await axios.get('http://localhost:8000/api/reports/profit-and-loss-report/', { params: profitLossParams });
         setProfitAndLossReport(profitLossRes.data);
 
-        const batchProfitRes = await axios.get('http://localhost:8000/api/reports/batch-profitability-report/');
+        const batchProfitParams: any = { ...dateParams };
+        if (batchAnimalId) {
+          batchProfitParams.animal_id = batchAnimalId;
+        }
+        const batchProfitRes = await axios.get('http://localhost:8000/api/reports/batch-profitability-report/', { params: batchProfitParams });
         setBatchProfitabilityReport(batchProfitRes.data);
 
         const fertilityRes = await axios.get('http://localhost:8000/api/reports/fertility-rate-report/');
@@ -191,7 +203,7 @@ function ReportsDashboard() {
       }
     };
     fetchReports();
-  }, [startDate, endDate, gdpAnimalId]); // Re-fetch reports when dates or GDP animal change
+  }, [startDate, endDate, gdpAnimalId, plAnimalId, batchAnimalId]); // Re-fetch reports when dates or GDP animal change
 
   const icaChartData = {
     labels: ['ICA'],
@@ -303,6 +315,20 @@ function ReportsDashboard() {
           <div className="card mb-3">
             <div className="card-header"><h3>Profit and Loss Report</h3></div>
             <div className="card-body">
+              <div className="mb-3">
+                <label htmlFor="plAnimal" className="form-label">Filter by Animal:</label>
+                <select
+                  id="plAnimal"
+                  className="form-select"
+                  value={plAnimalId || ''}
+                  onChange={(e) => setPlAnimalId(e.target.value ? parseInt(e.target.value) : null)}
+                >
+                  <option value="">-- All Animals --</option>
+                  {animals.map(animal => (
+                    <option key={animal.id} value={animal.id}>{animal.unique_tag}</option>
+                  ))}
+                </select>
+              </div>
               {profitAndLossReport ? (
                 <div>
                   <p>Total Income: ${profitAndLossReport.total_income}</p>
@@ -320,14 +346,29 @@ function ReportsDashboard() {
           <div className="card mb-3">
             <div className="card-header"><h3>Batch Profitability Report</h3></div>
             <div className="card-body">
+              <div className="mb-3">
+                <label htmlFor="batchAnimal" className="form-label">Filter by Animal (Batch):</label>
+                <select
+                  id="batchAnimal"
+                  className="form-select"
+                  value={batchAnimalId || ''}
+                  onChange={(e) => setBatchAnimalId(e.target.value ? parseInt(e.target.value) : null)}
+                >
+                  <option value="">-- Select Animal --</option>
+                  {animals.map(animal => (
+                    <option key={animal.id} value={animal.id}>{animal.unique_tag}</option>
+                  ))}
+                </select>
+              </div>
               {batchProfitabilityReport ? (
                 <div>
-                  <p>{batchProfitabilityReport.message}</p>
-                  {batchProfitabilityReport.example_batch_id && <p>Example Batch ID: {batchProfitabilityReport.example_batch_id}</p>}
-                  {batchProfitabilityReport.example_profit && <p>Example Profit: ${batchProfitabilityReport.example_profit}</p>}
+                  {batchProfitabilityReport.animal_id && <p>Animal: {animals.find(a => a.id === batchProfitabilityReport?.animal_id)?.unique_tag}</p>}
+                  <p>Total Income: ${batchProfitabilityReport.total_income}</p>
+                  <p>Total Cost: ${batchProfitabilityReport.total_cost}</p>
+                  <p>Profit/Loss: ${batchProfitabilityReport.profit_loss}</p>
                 </div>
               ) : (
-                <p>Loading Batch Profitability Report...</p>
+                <p>Select an animal to view batch profitability.</p>
               )}
             </div>
           </div>

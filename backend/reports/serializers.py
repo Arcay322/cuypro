@@ -16,9 +16,11 @@ class ProfitAndLossReportSerializer(serializers.Serializer):
     profit_loss = serializers.DecimalField(max_digits=10, decimal_places=2)
 
 class BatchProfitabilityReportSerializer(serializers.Serializer):
-    message = serializers.CharField(max_length=255)
-    example_batch_id = serializers.IntegerField(required=False)
-    example_profit = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    animal_id = serializers.IntegerField()
+    animal_tag = serializers.CharField(max_length=100)
+    total_income = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_cost = serializers.DecimalField(max_digits=10, decimal_places=2)
+    profit_loss = serializers.DecimalField(max_digits=10, decimal_places=2)
 
 class GDPReportSerializer(serializers.Serializer):
     animal_id = serializers.IntegerField()
