@@ -42,6 +42,7 @@ function FeedRationForm() {
           setDescription(rationRes.data.description);
           setComponents(rationRes.data.components.map((comp: any) => ({
             id: comp.id,
+            feed_ration: comp.feed_ration,
             feed_item: comp.feed_item,
             percentage: comp.percentage,
           })));

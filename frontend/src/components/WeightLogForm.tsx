@@ -36,7 +36,7 @@ function WeightLogForm() {
           setWeightKg(weightLogRes.data.weight_kg);
         }
       } catch (err) {
-        console.error('Error fetching data for weight log form:', err);
+        console.error('Error fetching data for animal form:', err);
         setError('Failed to load form data. Please check the backend API.');
       }
     };
