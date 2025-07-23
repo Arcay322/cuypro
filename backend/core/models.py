@@ -110,3 +110,12 @@ class FinancialTransaction(models.Model):
 
     def __str__(self):
         return f"{self.type} - {self.transaction_date} - {self.amount}"
+
+class FeedingLog(models.Model):
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    log_date = models.DateField()
+    feed_type = models.CharField(max_length=100) # e.g., 'Forraje', 'Concentrado'
+    quantity_kg = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return f"Feeding at {self.location.name} on {self.log_date} - {self.quantity_kg} kg of {self.feed_type}"

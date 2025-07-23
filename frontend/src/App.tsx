@@ -17,6 +17,8 @@ import TreatmentList from './components/TreatmentList';
 import TreatmentForm from './components/TreatmentForm';
 import FinancialTransactionList from './components/FinancialTransactionList';
 import FinancialTransactionForm from './components/FinancialTransactionForm';
+import FeedingLogList from './components/FeedingLogList';
+import FeedingLogForm from './components/FeedingLogForm';
 
 function App() {
   return (
@@ -50,6 +52,9 @@ function App() {
           <li>
             <Link to="/financialtransactions">Manage Financial Transactions</Link>
           </li>
+          <li>
+            <Link to="/feedinglogs">Manage Feeding Logs</Link>
+          </li>
         </ul>
       </nav>
 
@@ -81,6 +86,9 @@ function App() {
         <Route path="/financialtransactions" element={<FinancialTransactionList />} />
         <Route path="/financialtransactions/new" element={<FinancialTransactionForm />} />
         <Route path="/financialtransactions/edit/:id" element={<FinancialTransactionForm />} />
+        <Route path="/feedinglogs" element={<FeedingLogList />} />
+        <Route path="/feedinglogs/new" element={<FeedingLogForm />} />
+        <Route path="/feedinglogs/edit/:id" element={<FeedingLogForm />} />
         <Route path="/" element={<h1>Welcome to CuyPro!</h1>} />
       </Routes>
     </div>
