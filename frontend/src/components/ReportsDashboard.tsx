@@ -118,6 +118,14 @@ interface DensityReport {
   alert: string | null;
 }
 
+interface OptimalBreedingPairing {
+  female_id: number;
+  female_tag: string;
+  male_id: number;
+  male_tag: string;
+  reason: string;
+}
+
 interface Animal {
   id: number;
   unique_tag: string;
@@ -140,6 +148,7 @@ function ReportsDashboard() {
   const [lowStockAlerts, setLowStockAlerts] = useState<LowStockAlert[]>([]);
   const [reproductiveRanking, setReproductiveRanking] = useState<ReproductiveRanking[]>([]);
   const [densityReport, setDensityReport] = useState<DensityReport[]>([]);
+  const [optimalBreedingPairings, setOptimalBreedingPairings] = useState<OptimalBreedingPairing[]>([]);
   const [animals, setAnimals] = useState<Animal[]>([]); // For animal selection in GDP report
   const [breedingReadyAnimals, setBreedingReadyAnimals] = useState<Animal[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -204,6 +213,9 @@ function ReportsDashboard() {
 
         const densityRes = await axios.get('http://localhost:8000/api/reports/density-report/');
         setDensityReport(densityRes.data);
+
+        const optimalPairingRes = await axios.get('http://localhost:8000/api/reports/optimal-breeding-pairing/');
+        setOptimalBreedingPairings(optimalPairingRes.data);
 
         // Fetch animals for GDP report dropdown and breeding ready animals
         const animalsRes = await axios.get('http://localhost:8000/api/animals/');
@@ -590,6 +602,28 @@ function ReportsDashboard() {
                 </ul>
               ) : (
                 <p>No density report data available.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card mb-3">
+            <div className="card-header"><h3>Optimal Breeding Pairing</h3></div>
+            <div className="card-body">
+              {optimalBreedingPairings.length > 0 ? (
+                <ul className="list-group">
+                  {optimalBreedingPairings.map((pairing, index) => (
+                    <li key={index} className="list-group-item">
+                      Female: {pairing.female_tag} (ID: {pairing.female_id}) - Male: {pairing.male_tag} (ID: {pairing.male_id})
+                      <p className="mb-0 text-muted">Reason: {pairing.reason}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No optimal breeding pairings found based on current criteria.</p>
               )}
             </div>
           </div>

@@ -82,3 +82,10 @@ class DensityReportSerializer(serializers.Serializer):
     current_animals = serializers.IntegerField()
     density_percentage = serializers.DecimalField(max_digits=5, decimal_places=2)
     alert = serializers.CharField(max_length=255, allow_null=True)
+
+class OptimalBreedingPairingSerializer(serializers.Serializer):
+    female_id = serializers.IntegerField()
+    female_tag = serializers.CharField(max_length=100)
+    male_id = serializers.IntegerField()
+    male_tag = serializers.CharField(max_length=100)
+    reason = serializers.CharField(max_length=255)

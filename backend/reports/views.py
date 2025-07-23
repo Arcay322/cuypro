@@ -366,3 +366,43 @@ class DensityReportView(APIView):
                 'alert': alert
             })
         return Response(locations_data, status=status.HTTP_200_OK)
+
+class OptimalBreedingPairingView(APIView):
+    def get(self, request, format=None):
+        # Simplified logic for optimal breeding pairing
+        # Criteria: 
+        # 1. Female is breeding ready
+        # 2. Male is breeding ready
+        # 3. No immediate parent-offspring or sibling relationship
+
+        optimal_pairings = []
+
+        females = Animal.objects.filter(sex='F')
+        males = Animal.objects.filter(sex='M')
+
+        for female in females:
+            if not female.is_breeding_ready():
+                continue
+
+            for male in males:
+                if not male.is_breeding_ready():
+                    continue
+
+                # Check for immediate family relationships
+                # Parent-offspring
+                if female.sire == male or female.dam == male or male.sire == female or male.dam == female:
+                    continue
+
+                # Siblings (simplified: same sire and dam)
+                if female.sire and female.dam and female.sire == male.sire and female.dam == male.dam:
+                    continue
+
+                optimal_pairings.append({
+                    'female_id': female.id,
+                    'female_tag': female.unique_tag,
+                    'male_id': male.id,
+                    'male_tag': male.unique_tag,
+                    'reason': 'Both breeding ready and no immediate family ties.'
+                })
+        
+        return Response(optimal_pairings, status=status.HTTP_200_OK)
