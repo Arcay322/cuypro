@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment, FinancialTransaction, FeedingLog, FeedInventory
+from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment, FinancialTransaction, FeedingLog, FeedInventory, FeedRation, RationComponent
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,3 +60,17 @@ class FeedInventorySerializer(serializers.ModelSerializer):
     class Meta:
         model = FeedInventory
         fields = ('id', 'product_name', 'quantity_kg', 'cost_per_kg', 'supplier', 'entry_date')
+
+class RationComponentSerializer(serializers.ModelSerializer):
+    feed_item_name = serializers.ReadOnlyField(source='feed_item.product_name')
+
+    class Meta:
+        model = RationComponent
+        fields = ('id', 'feed_ration', 'feed_item', 'feed_item_name', 'percentage')
+
+class FeedRationSerializer(serializers.ModelSerializer):
+    components = RationComponentSerializer(many=True, read_only=True, source='rationcomponent_set')
+
+    class Meta:
+        model = FeedRation
+        fields = ('id', 'name', 'description', 'components')

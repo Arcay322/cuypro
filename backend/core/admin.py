@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment, FinancialTransaction, FeedingLog, FeedInventory
+from .models import Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment, FinancialTransaction, FeedingLog, FeedInventory, FeedRation, RationComponent
 
 admin.site.register(Line)
 admin.site.register(Location)
@@ -12,3 +12,5 @@ admin.site.register(Treatment)
 admin.site.register(FinancialTransaction)
 admin.site.register(FeedingLog)
 admin.site.register(FeedInventory)
+admin.site.register(FeedRation)
+admin.site.register(RationComponent)

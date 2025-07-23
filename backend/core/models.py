@@ -167,3 +167,18 @@ class FeedInventory(models.Model):
 
     def __str__(self):
         return f"{self.product_name} - {self.quantity_kg} kg"
+
+class FeedRation(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+class RationComponent(models.Model):
+    feed_ration = models.ForeignKey(FeedRation, on_delete=models.CASCADE)
+    feed_item = models.ForeignKey(FeedInventory, on_delete=models.CASCADE)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2) # Percentage of this item in the ration
+
+    def __str__(self):
+        return f"{self.feed_ration.name} - {self.feed_item.product_name} ({self.percentage}%)"

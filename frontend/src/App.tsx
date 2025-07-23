@@ -63,7 +63,7 @@ function App() {
                 <Link className="nav-link" to="/feedinventory">Manage Feed Inventory</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/feedinventory">Manage Feed Inventory</Link>
+                <Link className="nav-link" to="/feedrations">Manage Feed Rations</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/reports">Reports Dashboard</Link>
@@ -108,6 +108,9 @@ function App() {
           <Route path="/feedinventory" element={<FeedInventoryList />} />
           <Route path="/feedinventory/new" element={<FeedInventoryForm />} />
           <Route path="/feedinventory/edit/:id" element={<FeedInventoryForm />} />
+          <Route path="/feedrations" element={<FeedRationList />} />
+          <Route path="/feedrations/new" element={<FeedRationForm />} />
+          <Route path="/feedrations/edit/:id" element={<FeedRationForm />} />
         <Route path="/reports" element={<ReportsDashboard />} />
         <Route path="/" element={<h1>Welcome to CuyPro!</h1>} />
       </Routes>

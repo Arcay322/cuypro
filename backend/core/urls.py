@@ -15,6 +15,8 @@ router.register(r'treatments', views.TreatmentViewSet)
 router.register(r'financialtransactions', views.FinancialTransactionViewSet)
 router.register(r'feedinglogs', views.FeedingLogViewSet)
 router.register(r'feedinventory', views.FeedInventoryViewSet)
+router.register(r'feedrations', views.FeedRationViewSet)
+router.register(r'rationcomponents', views.RationComponentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

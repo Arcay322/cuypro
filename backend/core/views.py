@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment, FinancialTransaction, FeedingLog, FeedInventory
-from .serializers import UserSerializer, LineSerializer, LocationSerializer, AnimalSerializer, WeightLogSerializer, ReproductionEventSerializer, HealthLogSerializer, MedicationSerializer, TreatmentSerializer, FinancialTransactionSerializer, FeedingLogSerializer, FeedInventorySerializer
+from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment, FinancialTransaction, FeedingLog, FeedInventory, FeedRation, RationComponent
+from .serializers import UserSerializer, LineSerializer, LocationSerializer, AnimalSerializer, WeightLogSerializer, ReproductionEventSerializer, HealthLogSerializer, MedicationSerializer, TreatmentSerializer, FinancialTransactionSerializer, FeedingLogSerializer, FeedInventorySerializer, FeedRationSerializer, RationComponentSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -56,3 +56,11 @@ class FeedingLogViewSet(viewsets.ModelViewSet):
 class FeedInventoryViewSet(viewsets.ModelViewSet):
     queryset = FeedInventory.objects.all()
     serializer_class = FeedInventorySerializer
+
+class FeedRationViewSet(viewsets.ModelViewSet):
+    queryset = FeedRation.objects.all()
+    serializer_class = FeedRationSerializer
+
+class RationComponentViewSet(viewsets.ModelViewSet):
+    queryset = RationComponent.objects.all()
+    serializer_class = RationComponentSerializer
