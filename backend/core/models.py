@@ -51,3 +51,11 @@ class Animal(models.Model):
 
     def __str__(self):
         return self.unique_tag
+
+class WeightLog(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    log_date = models.DateField()
+    weight_kg = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.animal.unique_tag} - {self.log_date} - {self.weight_kg} kg"

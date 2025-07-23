@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Line, Location, Animal
+from .models import User, Line, Location, Animal, WeightLog
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,3 +20,8 @@ class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Animal
         fields = ('id', 'unique_tag', 'birth_date', 'sex', 'status', 'line', 'sire', 'dam', 'location')
+
+class WeightLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeightLog
+        fields = ('id', 'animal', 'log_date', 'weight_kg')

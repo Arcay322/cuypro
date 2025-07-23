@@ -5,6 +5,8 @@ import LocationList from './components/LocationList';
 import LocationForm from './components/LocationForm';
 import AnimalList from './components/AnimalList';
 import AnimalForm from './components/AnimalForm';
+import WeightLogList from './components/WeightLogList';
+import WeightLogForm from './components/WeightLogForm';
 
 function App() {
   return (
@@ -20,6 +22,9 @@ function App() {
           <li>
             <Link to="/animals">Manage Animals</Link>
           </li>
+          <li>
+            <Link to="/weightlogs">Manage Weight Logs</Link>
+          </li>
         </ul>
       </nav>
 
@@ -33,6 +38,9 @@ function App() {
         <Route path="/animals" element={<AnimalList />} />
         <Route path="/animals/new" element={<AnimalForm />} />
         <Route path="/animals/edit/:id" element={<AnimalForm />} />
+        <Route path="/weightlogs" element={<WeightLogList />} />
+        <Route path="/weightlogs/new" element={<WeightLogForm />} />
+        <Route path="/weightlogs/edit/:id" element={<WeightLogForm />} />
         <Route path="/" element={<h1>Welcome to CuyPro!</h1>} />
       </Routes>
     </div>
