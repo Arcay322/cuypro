@@ -9,6 +9,12 @@ import WeightLogList from './components/WeightLogList';
 import WeightLogForm from './components/WeightLogForm';
 import ReproductionEventList from './components/ReproductionEventList';
 import ReproductionEventForm from './components/ReproductionEventForm';
+import MedicationList from './components/MedicationList';
+import MedicationForm from './components/MedicationForm';
+import HealthLogList from './components/HealthLogList';
+import HealthLogForm from './components/HealthLogForm';
+import TreatmentList from './components/TreatmentList';
+import TreatmentForm from './components/TreatmentForm';
 
 function App() {
   return (
@@ -30,6 +36,15 @@ function App() {
           <li>
             <Link to="/reproductionevents">Manage Reproduction Events</Link>
           </li>
+          <li>
+            <Link to="/medications">Manage Medications</Link>
+          </li>
+          <li>
+            <Link to="/healthlogs">Manage Health Logs</Link>
+          </li>
+          <li>
+            <Link to="/treatments">Manage Treatments</Link>
+          </li>
         </ul>
       </nav>
 
@@ -49,6 +64,15 @@ function App() {
         <Route path="/reproductionevents" element={<ReproductionEventList />} />
         <Route path="/reproductionevents/new" element={<ReproductionEventForm />} />
         <Route path="/reproductionevents/edit/:id" element={<ReproductionEventForm />} />
+        <Route path="/medications" element={<MedicationList />} />
+        <Route path="/medications/new" element={<MedicationForm />} />
+        <Route path="/medications/edit/:id" element={<MedicationForm />} />
+        <Route path="/healthlogs" element={<HealthLogList />} />
+        <Route path="/healthlogs/new" element={<HealthLogForm />} />
+        <Route path="/healthlogs/edit/:id" element={<HealthLogForm />} />
+        <Route path="/treatments" element={<TreatmentList />} />
+        <Route path="/treatments/new" element={<TreatmentForm />} />
+        <Route path="/treatments/edit/:id" element={<TreatmentForm />} />
         <Route path="/" element={<h1>Welcome to CuyPro!</h1>} />
       </Routes>
     </div>

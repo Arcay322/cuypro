@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent
-from .serializers import UserSerializer, LineSerializer, LocationSerializer, AnimalSerializer, WeightLogSerializer, ReproductionEventSerializer
+from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment
+from .serializers import UserSerializer, LineSerializer, LocationSerializer, AnimalSerializer, WeightLogSerializer, ReproductionEventSerializer, HealthLogSerializer, MedicationSerializer, TreatmentSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -25,3 +25,15 @@ class WeightLogViewSet(viewsets.ModelViewSet):
 class ReproductionEventViewSet(viewsets.ModelViewSet):
     queryset = ReproductionEvent.objects.all()
     serializer_class = ReproductionEventSerializer
+
+class HealthLogViewSet(viewsets.ModelViewSet):
+    queryset = HealthLog.objects.all()
+    serializer_class = HealthLogSerializer
+
+class MedicationViewSet(viewsets.ModelViewSet):
+    queryset = Medication.objects.all()
+    serializer_class = MedicationSerializer
+
+class TreatmentViewSet(viewsets.ModelViewSet):
+    queryset = Treatment.objects.all()
+    serializer_class = TreatmentSerializer

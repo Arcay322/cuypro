@@ -9,6 +9,9 @@ router.register(r'locations', views.LocationViewSet)
 router.register(r'animals', views.AnimalViewSet)
 router.register(r'weightlogs', views.WeightLogViewSet)
 router.register(r'reproductionevents', views.ReproductionEventViewSet)
+router.register(r'healthlogs', views.HealthLogViewSet)
+router.register(r'medications', views.MedicationViewSet)
+router.register(r'treatments', views.TreatmentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

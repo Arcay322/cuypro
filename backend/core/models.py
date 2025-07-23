@@ -71,3 +71,28 @@ class ReproductionEvent(models.Model):
 
     def __str__(self):
         return f"Reproduction Event - Female: {self.female.unique_tag} - Mating: {self.mating_date}"
+
+class HealthLog(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    log_date = models.DateField()
+    diagnosis = models.TextField()
+    notes = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Health Log for {self.animal.unique_tag} on {self.log_date}"
+
+class Medication(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    withdrawal_period_days = models.IntegerField(help_text="Days until animal can be consumed after last treatment")
+
+    def __str__(self):
+        return self.name
+
+class Treatment(models.Model):
+    health_log = models.ForeignKey(HealthLog, on_delete=models.CASCADE)
+    medication = models.ForeignKey(Medication, on_delete=models.SET_NULL, null=True, blank=True)
+    dosage = models.CharField(max_length=100)
+    withdrawal_end_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Treatment for {self.health_log.animal.unique_tag} with {self.medication.name if self.medication else 'N/A'}"
