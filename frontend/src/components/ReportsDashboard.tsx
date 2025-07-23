@@ -102,6 +102,22 @@ interface LowStockAlert {
   message: string;
 }
 
+interface ReproductiveRanking {
+  animal_id: number;
+  animal_tag: string;
+  total_live_births: number;
+}
+
+interface DensityReport {
+  location_id: number;
+  location_name: string;
+  location_type: string;
+  capacity: number;
+  current_animals: number;
+  density_percentage: number;
+  alert: string | null;
+}
+
 interface Animal {
   id: number;
   unique_tag: string;
@@ -122,6 +138,8 @@ function ReportsDashboard() {
   const [withdrawalAlerts, setWithdrawalAlerts] = useState<WithdrawalAlert[]>([]);
   const [ineffectiveTreatmentAlerts, setIneffectiveTreatmentAlerts] = useState<IneffectiveTreatmentAlert[]>([]);
   const [lowStockAlerts, setLowStockAlerts] = useState<LowStockAlert[]>([]);
+  const [reproductiveRanking, setReproductiveRanking] = useState<ReproductiveRanking[]>([]);
+  const [densityReport, setDensityReport] = useState<DensityReport[]>([]);
   const [animals, setAnimals] = useState<Animal[]>([]); // For animal selection in GDP report
   const [breedingReadyAnimals, setBreedingReadyAnimals] = useState<Animal[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -180,6 +198,12 @@ function ReportsDashboard() {
 
         const lowStockRes = await axios.get('http://localhost:8000/api/reports/low-stock-alerts/');
         setLowStockAlerts(lowStockRes.data);
+
+        const reproductiveRankingRes = await axios.get('http://localhost:8000/api/reports/reproductive-ranking-report/');
+        setReproductiveRanking(reproductiveRankingRes.data);
+
+        const densityRes = await axios.get('http://localhost:8000/api/reports/density-report/');
+        setDensityReport(densityRes.data);
 
         // Fetch animals for GDP report dropdown and breeding ready animals
         const animalsRes = await axios.get('http://localhost:8000/api/animals/');
@@ -523,6 +547,49 @@ function ReportsDashboard() {
                 </ul>
               ) : (
                 <p>No low stock alerts.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card mb-3">
+            <div className="card-header"><h3>Reproductive Ranking</h3></div>
+            <div className="card-body">
+              {reproductiveRanking.length > 0 ? (
+                <ul className="list-group">
+                  {reproductiveRanking.map((rank, index) => (
+                    <li key={index} className="list-group-item">
+                      {rank.animal_tag} (Live Births: {rank.total_live_births})
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No reproductive ranking data available.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card mb-3">
+            <div className="card-header"><h3>Density Report</h3></div>
+            <div className="card-body">
+              {densityReport.length > 0 ? (
+                <ul className="list-group">
+                  {densityReport.map((report, index) => (
+                    <li key={index} className="list-group-item">
+                      {report.location_name} ({report.location_type}) - {report.current_animals}/{report.capacity} animals ({report.density_percentage}% full)
+                      {report.alert && <span className="badge bg-warning text-dark ms-2">{report.alert}</span>}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No density report data available.</p>
               )}
             </div>
           </div>

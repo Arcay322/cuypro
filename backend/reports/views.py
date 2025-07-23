@@ -9,9 +9,19 @@ class ICAReportView(APIView):
     def get(self, request, format=None):
         start_date_str = request.query_params.get('start_date')
         end_date_str = request.query_params.get('end_date')
+        animal_id = request.query_params.get('animal_id')
+        location_id = request.query_params.get('location_id')
 
         weight_logs = WeightLog.objects.all()
         feeding_logs = FeedingLog.objects.all()
+
+        if animal_id:
+            weight_logs = weight_logs.filter(animal_id=animal_id)
+            feeding_logs = feeding_logs.filter(location__animal__id=animal_id) # Assuming feeding logs are related to animals via location
+        
+        if location_id:
+            feeding_logs = feeding_logs.filter(location_id=location_id)
+            weight_logs = weight_logs.filter(animal__location_id=location_id) # Assuming animals are related to locations
 
         if start_date_str and end_date_str:
             try:
@@ -37,9 +47,19 @@ class CostPerKgGainedReportView(APIView):
     def get(self, request, format=None):
         start_date_str = request.query_params.get('start_date')
         end_date_str = request.query_params.get('end_date')
+        animal_id = request.query_params.get('animal_id')
+        location_id = request.query_params.get('location_id')
 
         financial_transactions = FinancialTransaction.objects.all()
         weight_logs = WeightLog.objects.all()
+
+        if animal_id:
+            financial_transactions = financial_transactions.filter(related_entity_id=animal_id) # Assuming related_entity_id can be animal_id
+            weight_logs = weight_logs.filter(animal_id=animal_id)
+        
+        if location_id:
+            # This would require a more complex join or assumption about related_entity_id for locations
+            return Response({'error': 'Filtering by location_id for CostPerKgGained is not yet fully implemented.'}, status=status.HTTP_400_BAD_REQUEST)
 
         if start_date_str and end_date_str:
             try:
@@ -80,9 +100,15 @@ class ProfitAndLossReportView(APIView):
 
         if animal_id:
             transactions = transactions.filter(related_entity_id=animal_id, type__in=['Costo', 'Ingreso']) # Assuming related_entity_id can be animal_id
-        elif location_id:
-            # This would require a more complex join or assumption about related_entity_id for locations
-            return Response({'error': 'Filtering by location_id for P&L is not yet implemented.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if location_id:
+            # Filter financial transactions related to animals in a specific location
+            # This assumes that FinancialTransaction.related_entity_id can refer to an Animal ID,
+            # and that Animal has a location_id field.
+            # This is a simplified approach and might need more robust handling depending on how
+            # financial transactions are truly linked to locations/batches.
+            animals_in_location = Animal.objects.filter(location_id=location_id)
+            transactions = transactions.filter(related_entity_id__in=animals_in_location.values_list('id', flat=True))
 
         total_income = transactions.filter(type='Ingreso').aggregate(Sum('amount'))['amount__sum'] or 0
         total_cost = transactions.filter(type='Costo').aggregate(Sum('amount'))['amount__sum'] or 0
@@ -298,3 +324,45 @@ class LowStockAlertsView(APIView):
                 'message': f"Low stock alert: {item.product_name} is below {low_stock_threshold} kg. Current stock: {item.quantity_kg} kg."
             })
         return Response(alerts, status=status.HTTP_200_OK)
+
+class ReproductiveRankingReportView(APIView):
+    def get(self, request, format=None):
+        # This is a simplified example. A real ranking would involve more complex metrics.
+        # For demonstration, let's rank by total live births.
+        ranked_animals = Animal.objects.filter(sex='F').annotate(total_live_births=Sum('reproduction_events_female__live_births')).order_by('-total_live_births')
+
+        data = []
+        for animal in ranked_animals:
+            data.append({
+                'animal_id': animal.id,
+                'animal_tag': animal.unique_tag,
+                'total_live_births': animal.total_live_births or 0
+            })
+        return Response(data, status=status.HTTP_200_OK)
+
+class DensityReportView(APIView):
+    def get(self, request, format=None):
+        # This is a simplified example. Real density management would involve
+        # calculating current density vs. capacity for each location.
+        
+        locations_data = []
+        for location in Location.objects.all():
+            current_animals = Animal.objects.filter(location=location).count()
+            density_percentage = (current_animals / location.capacity) * 100 if location.capacity > 0 else 0
+            
+            alert = None
+            if density_percentage > 100:
+                alert = f"Location {location.name} is over capacity! ({density_percentage:.2f}%)"
+            elif density_percentage > 80:
+                alert = f"Location {location.name} is nearing capacity. ({density_percentage:.2f}%)"
+
+            locations_data.append({
+                'location_id': location.id,
+                'location_name': location.name,
+                'location_type': location.type,
+                'capacity': location.capacity,
+                'current_animals': current_animals,
+                'density_percentage': round(density_percentage, 2),
+                'alert': alert
+            })
+        return Response(locations_data, status=status.HTTP_200_OK)

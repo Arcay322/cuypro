@@ -68,3 +68,17 @@ class LowStockAlertSerializer(serializers.Serializer):
     current_stock_kg = serializers.DecimalField(max_digits=10, decimal_places=2)
     threshold_kg = serializers.DecimalField(max_digits=10, decimal_places=2)
     message = serializers.CharField(max_length=255)
+
+class ReproductiveRankingSerializer(serializers.Serializer):
+    animal_id = serializers.IntegerField()
+    animal_tag = serializers.CharField(max_length=100)
+    total_live_births = serializers.IntegerField()
+
+class DensityReportSerializer(serializers.Serializer):
+    location_id = serializers.IntegerField()
+    location_name = serializers.CharField(max_length=100)
+    location_type = serializers.CharField(max_length=10)
+    capacity = serializers.IntegerField()
+    current_animals = serializers.IntegerField()
+    density_percentage = serializers.DecimalField(max_digits=5, decimal_places=2)
+    alert = serializers.CharField(max_length=255, allow_null=True)
