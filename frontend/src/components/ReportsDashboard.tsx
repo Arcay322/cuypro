@@ -77,6 +77,22 @@ interface WPIReport {
   wpi: number;
 }
 
+interface WithdrawalAlert {
+  animal_id: number;
+  animal_tag: string;
+  medication: string;
+  withdrawal_end_date: string;
+  message: string;
+}
+
+interface IneffectiveTreatmentAlert {
+  animal_id: number;
+  animal_tag: string;
+  diagnosis: string;
+  treatment_count: number;
+  message: string;
+}
+
 interface Animal {
   id: number;
   unique_tag: string;
@@ -94,6 +110,8 @@ function ReportsDashboard() {
   const [parturitionRateReport, setParturitionRateReport] = useState<ParturitionRateReport | null>(null);
   const [prolificacyReport, setProlificacyReport] = useState<ProlificacyReport | null>(null);
   const [wpiReport, setWpiReport] = useState<WPIReport | null>(null);
+  const [withdrawalAlerts, setWithdrawalAlerts] = useState<WithdrawalAlert[]>([]);
+  const [ineffectiveTreatmentAlerts, setIneffectiveTreatmentAlerts] = useState<IneffectiveTreatmentAlert[]>([]);
   const [animals, setAnimals] = useState<Animal[]>([]); // For animal selection in GDP report
   const [breedingReadyAnimals, setBreedingReadyAnimals] = useState<Animal[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -133,6 +151,12 @@ function ReportsDashboard() {
 
         const wpiRes = await axios.get('http://localhost:8000/api/reports/wpi-report/');
         setWpiReport(wpiRes.data);
+
+        const withdrawalRes = await axios.get('http://localhost:8000/api/reports/withdrawal-alerts/');
+        setWithdrawalAlerts(withdrawalRes.data);
+
+        const ineffectiveRes = await axios.get('http://localhost:8000/api/reports/ineffective-treatment-alerts/');
+        setIneffectiveTreatmentAlerts(ineffectiveRes.data);
 
         // Fetch animals for GDP report dropdown and breeding ready animals
         const animalsRes = await axios.get('http://localhost:8000/api/animals/');
@@ -420,6 +444,41 @@ function ReportsDashboard() {
                 </ul>
               ) : (
                 <p>No animals currently ready for breeding based on defined criteria.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card mb-3">
+            <div className="card-header"><h3>Health Alerts</h3></div>
+            <div className="card-body">
+              <h4>Withdrawal Period Alerts</h4>
+              {withdrawalAlerts.length > 0 ? (
+                <ul className="list-group mb-3">
+                  {withdrawalAlerts.map((alert, index) => (
+                    <li key={index} className="list-group-item alert-warning">
+                      {alert.message} (Animal ID: {alert.animal_id}, Medication: {alert.medication}, End Date: {alert.withdrawal_end_date})
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No withdrawal period alerts.</p>
+              )}
+
+              <h4>Ineffective Treatment Alerts</h4>
+              {ineffectiveTreatmentAlerts.length > 0 ? (
+                <ul className="list-group">
+                  {ineffectiveTreatmentAlerts.map((alert, index) => (
+                    <li key={index} className="list-group-item alert-danger">
+                      {alert.message} (Animal ID: {alert.animal_id}, Diagnosis: {alert.diagnosis}, Treatments: {alert.treatment_count})
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No ineffective treatment alerts.</p>
               )}
             </div>
           </div>

@@ -116,6 +116,11 @@ class Treatment(models.Model):
     dosage = models.CharField(max_length=100)
     withdrawal_end_date = models.DateField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        if self.medication and self.health_log.log_date:
+            self.withdrawal_end_date = self.health_log.log_date + timedelta(days=self.medication.withdrawal_period_days)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Treatment for {self.health_log.animal.unique_tag} with {self.medication.name if self.medication else 'N/A'}"
 

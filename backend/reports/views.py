@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Sum, F, Count, Avg
-from core.models import Animal, WeightLog, FeedingLog, FinancialTransaction, ReproductionEvent
-from datetime import datetime, timedelta
+from core.models import Animal, WeightLog, FeedingLog, FinancialTransaction, ReproductionEvent, Treatment, HealthLog
+from datetime import datetime, timedelta, date
 
 class ICAReportView(APIView):
     def get(self, request, format=None):
@@ -188,3 +188,51 @@ class WPIReportView(APIView):
             'message': 'WPI calculation is complex and requires more data.',
             'wpi': 0.0
         }, status=status.HTTP_200_OK)
+
+class WithdrawalAlertsView(APIView):
+    def get(self, request, format=None):
+        today = date.today()
+        alerts = []
+        
+        # Find treatments where withdrawal period has ended but animal is still marked as 'In Quarantine'
+        # or any other status that implies it's not ready for sale/consumption
+        overdue_treatments = Treatment.objects.filter(
+            withdrawal_end_date__lte=today,
+            health_log__animal__status='In Quarantine' # Assuming 'In Quarantine' means not ready
+        ).select_related('health_log__animal', 'medication')
+
+        for treatment in overdue_treatments:
+            alerts.append({
+                'animal_id': treatment.health_log.animal.id,
+                'animal_tag': treatment.health_log.animal.unique_tag,
+                'medication': treatment.medication.name if treatment.medication else 'N/A',
+                'withdrawal_end_date': treatment.withdrawal_end_date,
+                'message': f"Animal {treatment.health_log.animal.unique_tag} has completed its withdrawal period for {treatment.medication.name if treatment.medication else 'N/A'} and is still in quarantine."
+            })
+        
+        return Response(alerts, status=status.HTTP_200_OK)
+
+class IneffectiveTreatmentAlertsView(APIView):
+    def get(self, request, format=None):
+        alerts = []
+        # This is a simplified example. A real implementation would involve more sophisticated logic.
+        # For instance, looking for multiple treatments for the same diagnosis within a short period.
+        
+        # Example: Find animals with more than 2 treatments for the same diagnosis in the last 30 days
+        thirty_days_ago = date.today() - timedelta(days=30)
+        
+        # Group health logs by animal and diagnosis
+        health_logs_grouped = HealthLog.objects.filter(log_date__gte=thirty_days_ago).values('animal', 'diagnosis').annotate(treatment_count=Count('treatment'))
+
+        for entry in health_logs_grouped:
+            if entry['treatment_count'] > 2:
+                animal = Animal.objects.get(id=entry['animal'])
+                alerts.append({
+                    'animal_id': animal.id,
+                    'animal_tag': animal.unique_tag,
+                    'diagnosis': entry['diagnosis'],
+                    'treatment_count': entry['treatment_count'],
+                    'message': f"Animal {animal.unique_tag} has received {entry['treatment_count']} treatments for {entry['diagnosis']} in the last 30 days, suggesting potential ineffectiveness."
+                })
+
+        return Response(alerts, status=status.HTTP_200_OK)

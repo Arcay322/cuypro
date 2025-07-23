@@ -46,3 +46,17 @@ class ProlificacyReportSerializer(serializers.Serializer):
 class WPIReportSerializer(serializers.Serializer):
     message = serializers.CharField(max_length=255)
     wpi = serializers.DecimalField(max_digits=5, decimal_places=2)
+
+class WithdrawalAlertSerializer(serializers.Serializer):
+    animal_id = serializers.IntegerField()
+    animal_tag = serializers.CharField(max_length=100)
+    medication = serializers.CharField(max_length=100)
+    withdrawal_end_date = serializers.DateField()
+    message = serializers.CharField(max_length=255)
+
+class IneffectiveTreatmentAlertSerializer(serializers.Serializer):
+    animal_id = serializers.IntegerField()
+    animal_tag = serializers.CharField(max_length=100)
+    diagnosis = serializers.CharField(max_length=255)
+    treatment_count = serializers.IntegerField()
+    message = serializers.CharField(max_length=255)

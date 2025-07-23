@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment, FinancialTransaction, FeedingLog
 from .serializers import UserSerializer, LineSerializer, LocationSerializer, AnimalSerializer, WeightLogSerializer, ReproductionEventSerializer, HealthLogSerializer, MedicationSerializer, TreatmentSerializer, FinancialTransactionSerializer, FeedingLogSerializer
 
@@ -17,6 +18,12 @@ class LocationViewSet(viewsets.ModelViewSet):
 class AnimalViewSet(viewsets.ModelViewSet):
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.status == 'Retired' and request.data.get('status') == 'Sold':
+            return Response({'error': 'Cannot sell a retired animal.'}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
 
 class WeightLogViewSet(viewsets.ModelViewSet):
     queryset = WeightLog.objects.all()
