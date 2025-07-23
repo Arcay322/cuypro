@@ -19,3 +19,11 @@ class BatchProfitabilityReportSerializer(serializers.Serializer):
     message = serializers.CharField(max_length=255)
     example_batch_id = serializers.IntegerField(required=False)
     example_profit = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+
+class GDPReportSerializer(serializers.Serializer):
+    animal_id = serializers.IntegerField()
+    animal_tag = serializers.CharField(max_length=100)
+    initial_weight_kg = serializers.DecimalField(max_digits=5, decimal_places=2)
+    final_weight_kg = serializers.DecimalField(max_digits=5, decimal_places=2)
+    num_days = serializers.IntegerField()
+    gdp = serializers.DecimalField(max_digits=10, decimal_places=2)

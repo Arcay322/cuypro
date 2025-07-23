@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -46,14 +45,31 @@ interface BatchProfitabilityReport {
   example_profit?: number;
 }
 
+interface GDPReport {
+  animal_id: number;
+  animal_tag: string;
+  initial_weight_kg: number;
+  final_weight_kg: number;
+  num_days: number;
+  gdp: number;
+}
+
+interface Animal {
+  id: number;
+  unique_tag: string;
+}
+
 function ReportsDashboard() {
   const [icaReport, setIcaReport] = useState<ICAReport | null>(null);
   const [costReport, setCostReport] = useState<CostPerKgGainedReport | null>(null);
   const [profitAndLossReport, setProfitAndLossReport] = useState<ProfitAndLossReport | null>(null);
   const [batchProfitabilityReport, setBatchProfitabilityReport] = useState<BatchProfitabilityReport | null>(null);
+  const [gdpReport, setGdpReport] = useState<GDPReport | null>(null);
+  const [animals, setAnimals] = useState<Animal[]>([]); // For animal selection in GDP report
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [gdpAnimalId, setGdpAnimalId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -76,13 +92,28 @@ function ReportsDashboard() {
         const batchProfitRes = await axios.get('http://localhost:8000/api/reports/batch-profitability-report/');
         setBatchProfitabilityReport(batchProfitRes.data);
 
+        // Fetch animals for GDP report dropdown
+        const animalsRes = await axios.get('http://localhost:8000/api/animals/');
+        setAnimals(animalsRes.data);
+
+        // Fetch GDP report if animal is selected
+        if (gdpAnimalId) {
+          const gdpParams = {
+            animal_id: gdpAnimalId,
+            start_date: startDate,
+            end_date: endDate,
+          };
+          const gdpRes = await axios.get('http://localhost:8000/api/reports/gdp-report/', { params: gdpParams });
+          setGdpReport(gdpRes.data);
+        }
+
       } catch (err) {
         console.error('Error fetching reports:', err);
         setError('Failed to load reports. Please check the backend API and ensure data exists.');
       }
     };
     fetchReports();
-  }, [startDate, endDate]); // Re-fetch reports when dates change
+  }, [startDate, endDate, gdpAnimalId]); // Re-fetch reports when dates or GDP animal change
 
   const icaChartData = {
     labels: ['ICA'],
@@ -219,6 +250,41 @@ function ReportsDashboard() {
                 </div>
               ) : (
                 <p>Loading Batch Profitability Report...</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card mb-3">
+            <div className="card-header"><h3>GDP Report (Growth Daily Performance)</h3></div>
+            <div className="card-body">
+              <div className="mb-3">
+                <label htmlFor="gdpAnimal" className="form-label">Select Animal:</label>
+                <select
+                  id="gdpAnimal"
+                  className="form-select"
+                  value={gdpAnimalId || ''}
+                  onChange={(e) => setGdpAnimalId(e.target.value ? parseInt(e.target.value) : null)}
+                >
+                  <option value="">-- Select Animal --</option>
+                  {animals.map(animal => (
+                    <option key={animal.id} value={animal.id}>{animal.unique_tag}</option>
+                  ))}
+                </select>
+              </div>
+              {gdpReport ? (
+                <div>
+                  <p>Animal: {gdpReport.animal_tag}</p>
+                  <p>Initial Weight: {gdpReport.initial_weight_kg} kg</p>
+                  <p>Final Weight: {gdpReport.final_weight_kg} kg</p>
+                  <p>Number of Days: {gdpReport.num_days}</p>
+                  <p>GDP: {gdpReport.gdp} kg/day</p>
+                </div>
+              ) : (
+                <p>Select an animal and date range to view GDP.</p>
               )}
             </div>
           </div>

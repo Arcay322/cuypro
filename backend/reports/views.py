@@ -87,3 +87,47 @@ class BatchProfitabilityReportView(APIView):
             'example_batch_id': 1,
             'example_profit': 150.75
         }, status=status.HTTP_200_OK)
+
+class GDPReportView(APIView):
+    def get(self, request, format=None):
+        animal_id = request.query_params.get('animal_id')
+        start_date_str = request.query_params.get('start_date')
+        end_date_str = request.query_params.get('end_date')
+
+        if not animal_id:
+            return Response({'error': 'animal_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            animal = Animal.objects.get(id=animal_id)
+        except Animal.DoesNotExist:
+            return Response({'error': 'Animal not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        weight_logs = WeightLog.objects.filter(animal=animal).order_by('log_date')
+
+        if start_date_str and end_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                weight_logs = weight_logs.filter(log_date__range=[start_date, end_date])
+            except ValueError:
+                return Response({'error': 'Invalid date format. Use YYYY-MM-DD.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not weight_logs.exists() or weight_logs.count() < 2:
+            return Response({'error': 'Not enough weight logs for GDP calculation in the given period.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        initial_weight = weight_logs.first().weight_kg
+        final_weight = weight_logs.last().weight_kg
+        
+        # Calculate days between first and last log
+        num_days = (weight_logs.last().log_date - weight_logs.first().log_date).days
+
+        gdp = (final_weight - initial_weight) / num_days if num_days > 0 else 0
+
+        return Response({
+            'animal_id': animal_id,
+            'animal_tag': animal.unique_tag,
+            'initial_weight_kg': initial_weight,
+            'final_weight_kg': final_weight,
+            'num_days': num_days,
+            'gdp': round(gdp, 2)
+        }, status=status.HTTP_200_OK)
