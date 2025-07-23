@@ -96,3 +96,17 @@ class Treatment(models.Model):
 
     def __str__(self):
         return f"Treatment for {self.health_log.animal.unique_tag} with {self.medication.name if self.medication else 'N/A'}"
+
+class FinancialTransaction(models.Model):
+    TRANSACTION_TYPES = (
+        ('Costo', 'Costo'),
+        ('Ingreso', 'Ingreso'),
+    )
+    transaction_date = models.DateField()
+    type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True, null=True)
+    related_entity_id = models.IntegerField(null=True, blank=True, help_text="ID of related entity like Animal, Location, etc.")
+
+    def __str__(self):
+        return f"{self.type} - {self.transaction_date} - {self.amount}"

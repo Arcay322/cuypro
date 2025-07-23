@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment
+from .models import User, Line, Location, Animal, WeightLog, ReproductionEvent, HealthLog, Medication, Treatment, FinancialTransaction
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,3 +45,8 @@ class TreatmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Treatment
         fields = ('id', 'health_log', 'medication', 'dosage', 'withdrawal_end_date')
+
+class FinancialTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FinancialTransaction
+        fields = ('id', 'transaction_date', 'type', 'amount', 'description', 'related_entity_id')

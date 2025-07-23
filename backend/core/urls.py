@@ -12,6 +12,7 @@ router.register(r'reproductionevents', views.ReproductionEventViewSet)
 router.register(r'healthlogs', views.HealthLogViewSet)
 router.register(r'medications', views.MedicationViewSet)
 router.register(r'treatments', views.TreatmentViewSet)
+router.register(r'financialtransactions', views.FinancialTransactionViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

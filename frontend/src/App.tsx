@@ -15,6 +15,8 @@ import HealthLogList from './components/HealthLogList';
 import HealthLogForm from './components/HealthLogForm';
 import TreatmentList from './components/TreatmentList';
 import TreatmentForm from './components/TreatmentForm';
+import FinancialTransactionList from './components/FinancialTransactionList';
+import FinancialTransactionForm from './components/FinancialTransactionForm';
 
 function App() {
   return (
@@ -45,6 +47,9 @@ function App() {
           <li>
             <Link to="/treatments">Manage Treatments</Link>
           </li>
+          <li>
+            <Link to="/financialtransactions">Manage Financial Transactions</Link>
+          </li>
         </ul>
       </nav>
 
@@ -73,6 +78,9 @@ function App() {
         <Route path="/treatments" element={<TreatmentList />} />
         <Route path="/treatments/new" element={<TreatmentForm />} />
         <Route path="/treatments/edit/:id" element={<TreatmentForm />} />
+        <Route path="/financialtransactions" element={<FinancialTransactionList />} />
+        <Route path="/financialtransactions/new" element={<FinancialTransactionForm />} />
+        <Route path="/financialtransactions/edit/:id" element={<FinancialTransactionForm />} />
         <Route path="/" element={<h1>Welcome to CuyPro!</h1>} />
       </Routes>
     </div>
